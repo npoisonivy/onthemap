@@ -15,7 +15,7 @@ class LoginViewController: UIViewController {
 //    var appDelegate: AppDelegate! - We can either place info such as sessionID, userID @ appDelegate, but I choose to store it @ UdacityClient.swift where stores everything a client does = make GET/ POST request "taskforGETRequest", etc
     var keyboardOnScreen = false
     var session: URLSession!
-    var udacityClass: UdacityClient? // so i can call class UdacityClient's (for logged in user) properties there - ex: UserID, firstName, lastName
+//    var udacityClass: UdacityClient? = UdacityClient() // so i can call class UdacityClient's (for logged in user) properties there - ex: UserID, firstName, lastName
     
     
     // MARK: Outlets
@@ -24,8 +24,6 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var loginButton: BorderedButton!
     @IBOutlet weak var debugTextLabel: UILabel!
     // why does my favoritemovies app has this - @IBOutlet weak var movieImageView: UIImageView! ?? do i need one for Udacity image?
-    
-    
     
     // MARK: Life Cycle
     override func viewDidLoad() {
@@ -56,14 +54,14 @@ class LoginViewController: UIViewController {
             debugTextLabel.text = "Email or Password Empty!"
             return
         } else { // if everything is filled...
+            
             setUIenabled(false) // disable email, pw, loginbutton everything while sending networking request
             
             // set & save username, password to class UdacityClient, so I can retrieve anywhere from other pages - like "UdacityConvenience"
+            UdacityClient.sharedInstance().username = emailTextField.text!
+            UdacityClient.sharedInstance().password = passwordTextField.text!
             
-            udacityClass?.userID = emailTextField.text!
-            udacityClass?.password = passwordTextField.text!
-            print("udacityClient?.username is... \(udacityClass?.username)")  // udacityClient?.username is... nil
-            
+            print("udacityClient?.username is... \(UdacityClient.sharedInstance().username)")  // udacityClient?.username is... nil
         }
     // make the request to Udacity for authentication - send POST email, password to parse server - to get session id -> so what am i going to do with that session id?
 //            UdacityClient.sharedInstance().authenticateWithUserCredentials(emailTextField.text!, passwordTextField.text!)

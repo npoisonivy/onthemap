@@ -24,6 +24,7 @@ request.httpMethod = "POST"
 request.addValue("application/json", forHTTPHeaderField: "Accept")
 request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 request.httpBody = "{\"udacity\": {\"username\": \"spacenikki@gmail.com\", \"password\": \"wifi=123\"}}".data(using: String.Encoding.utf8)
+
 let session = URLSession.shared
 let task = session.dataTask(with: request as URLRequest) { data, response, error in
     if error != nil { // Handle error…

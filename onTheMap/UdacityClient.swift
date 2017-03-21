@@ -5,7 +5,7 @@
 //  Created by Nikki L on 2/28/17.
 //  Copyright © 2017 Nikki. All rights reserved.
 //
-import UIKit // needed???
+
 import Foundation
 // should store below items:
 // data: session, session; taskForGETMethod, taskForPOSTMethod, helper func "substitueKeyInMethod" if we need to pass a var like student_id in the url, converDataWithCompletionHandler (deal with data - ParsedResult), studentURLFromParameters - create a URL from parameters, shareInstance.
@@ -19,11 +19,10 @@ class UdacityClient: NSObject { // save loginUser properties here!!
     
     // authentication state
     var sessionID: String? = nil
-    var userID: String? = nil // = uniqueKey
+    var userID: String? = "3903878747" // nil // = uniqueKey  - hard code for testing
     
-    // from logged in user
-    var username: String? = nil    // must put "nil" otherwise, error: Instance member '' cannot be used on type 'udacityClass'
-
+    // from logged in user - must put "nil" or else, error: Instance member '' cannot be used on type 'udacityClass'
+    var username: String? = nil
     var password: String? = nil
     
     // from calling GET public data
@@ -108,12 +107,12 @@ class UdacityClient: NSObject { // save loginUser properties here!!
     
     func taskForPOSTMethod(_ method: String, parameters: [String:AnyObject], jsonBody: String, completionHandlerForPOST: @escaping (_ result: AnyObject?, _ error: NSError?) -> Void) -> URLSessionDataTask {
         
-        /* 1. Set the parameters */
-        var parametersWithApiKey = parameters
-        parametersWithApiKey[ParameterKeys.ApiKey] = Constants.ApiKey as AnyObject?
+        /* 1. Set the parameters - we don't need this as no need to add apiKey for this project*/
+//        var parametersWithApiKey = parameters
+//        parametersWithApiKey[ParameterKeys.ApiKey] = Constants.ApiKey as AnyObject?
         
         /* 2/3. Build the URL, Configure the request */
-        let request = NSMutableURLRequest(url: studentURLFromParameters(parametersWithApiKey, withPathExtension: method))
+        let request = NSMutableURLRequest(url: studentURLFromParameters(parameters, withPathExtension: method))
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Accept")
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -149,6 +148,7 @@ class UdacityClient: NSObject { // save loginUser properties here!!
                 return
             }
             
+            print("data is....\(data)") // data is....270 bytes
             /* 5/6. Parse the data and use the data (happens in completion handler) */
             self.convertDataWithCompletionHandler(data, completionHandlerForConvertData: completionHandlerForPOST)
         }
@@ -164,6 +164,7 @@ class UdacityClient: NSObject { // save loginUser properties here!!
     // substitute the key for the value that is contained within the method name
     func substituteKeyInMethod(_ method: String, key: String, value: String) -> String? {
         if method.range(of: "{\(key)}") != nil {
+            print("mutableMethod after transformation of substituteKey is .. \(method)")
             return method.replacingOccurrences(of: "{\(key)}", with: value)
         } else {
             return nil
@@ -177,6 +178,8 @@ class UdacityClient: NSObject { // save loginUser properties here!!
         var parsedResult: AnyObject! = nil
         do {
             parsedResult = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as AnyObject
+            print("parsedResult is ...\(parsedResult)")
+            
         } catch {
             let userInfo = [NSLocalizedDescriptionKey : "Could not parse the data as JSON: '\(data)'"]
             completionHandlerForConvertData(nil, NSError(domain: "convertDataWithCompletionHandler", code: 1, userInfo: userInfo))

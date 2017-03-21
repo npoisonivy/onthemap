@@ -109,7 +109,7 @@ extension UdacityClient { // Instead of storing them under UdacityClient, I just
         // StudentLocation
         static let LocationResult = "results" // confirm by calling the request, and check the json response - {"results":[{"objectId":"oWtekKx1UU","latitude":
         
-        // get student locationss
+        // get student locations
         static let FirstName = "firstName"
         static let LastName = "lastName"
         static let mediaURL = "mediaURL"
@@ -130,7 +130,12 @@ extension UdacityClient { // Instead of storing them under UdacityClient, I just
         static let UserID = "UserID"
         
         
-        // get public data - ?? what do i want to store from the response???
+        // get public data
+        static let firstName = "first_name"
+        static let lastName = "last_name"
+        
+        
+        
         
     }
     
