@@ -45,74 +45,51 @@ class TabbedViewController: UITabBarController {
         task.resume()
         
         self.dismiss(animated: true, completion: nil)
-    }
+    } // end of logoutBtnPressed
     
     // add "refresh" button action
-    @IBAction func refreshBtnPressed(_ sender: UIBarButtonItem) {
+    @IBAction func refreshBtnPressed(_ sender: AnyObject) {
         // call GET request of Student Locationssss
         UdacityClient.sharedInstance().getStudentsLocations { (studentsLocations, error) in
             if let locations = studentsLocations {
                 self.locations = locations
+                print("self.location inside refreshbtn is... \(self.locations.count)") // #100 right!
                 performUIUpdatesOnMain {
                     // reload data ... but i dont have access to the tablview / mapview...
+                    let StudentTable = self.viewControllers?[1] as? StudentsTableViewController
+                    StudentTable?.locations = self.locations  // must have this to pass locations to next VC
+                    StudentTable?.tableView.reloadData() // how to access viewcontroller of type of another view controller
+                    
+//                    let StudentMap = self.viewControllers?[0] as?
+                         
                 }
             } else {
                 print(error)
             }
-    }
+        }
+    } // end of refreshBtnPressed
     
-    
-    func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
-        
     }
-    
-//    var students: [Students] = [Students]() // all students info got saved to this from the server
     
     // need to pass this studentInformation to Map and list (table view controller) file... so i can display them there
-    
-
-    
-    func viewWillAppear(_ animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        UdacityClient.sharedInstance().getStudentsLocations { (namethisanything, error) in
-            if let locations = namethisanything {
+        print("viewWillappear is called")
+        UdacityClient.sharedInstance().getStudentsLocations { (studentsLocations, error) in
+            if let locations = studentsLocations {
                 self.locations = locations   // many struct of [StudentLocation]
+                print("self.location count viewWillAppear is... \(self.locations.count)") // #100 right??
+                performUIUpdatesOnMain {
+                    let StudentTable = self.viewControllers?[1] as? StudentsTableViewController
+                    StudentTable?.locations = self.locations // neccessary -> to pass locations to next VC
+                    StudentTable?.tableView.reloadData()
+                }
             } else {
                 print(error)
             }
         }
-    }
-
-    
-        // when it returns, it will return "students"'s user id, fn, ln, media url to display...we can use below code
-//        TMDBClient.sharedInstance().getFavoriteMovies { (movies, error) in
-//            if let movies = movies {
-//                self.movies = movies -> save movies/ students on this very tabbed view controller on top
-//                performUIUpdatesOnMain {
-//                    self.moviesTableView.reloadData()
-//                }
-//            } else {
-//                print(error)
-//            }
-//        }
-
-    }
-    
-    /*
-     // MARK: - Navigation
-     
-     // In a storyboard-based application, you will often want to do a little preparation before navigation
-     
-     // send the above Students info to the next view controller.
-     
-     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-     // Get the new view controller using segue.destinationViewController.
-     // Pass the selected object to the new view controller.
-     }
-     */
-    
-
-}
+    } // closing viewWillAppear
+} // end of class TabbedViewController
 

@@ -22,14 +22,16 @@ extension UdacityClient { // Instead of storing them under UdacityClient, I just
         static let ApiScheme = "https"
         static let ApiHost = "parse.udacity.com"
         static let ApiPath = "/parse"
-
-//        GET Student Locations - https://parse.udacity.com/parse/classes/StudentLocation?limit=100&order=-updatedAt
-//        PUTting a Student Location - https://parse.udacity.com/parse/classes/StudentLocation/8ZExGR5uX8
-//        POSTing a Student Location - https://parse.udacity.com/parse/classes/StudentLocation
-//        GETting a Student Location - https://parse.udacity.com/parse/classes/StudentLocation
-
         
-        static let UdacityURL = "https://www.udacity.com/api"
+        //        GET Student Locations - https://parse.udacity.com/parse/classes/StudentLocation?skip=400&limit=100&order=-updatedAt
+        //        PUTting a Student Location - https://parse.udacity.com/parse/classes/StudentLocation/8ZExGR5uX8
+        //        POSTing a Student Location - https://parse.udacity.com/parse/classes/StudentLocation
+        //        GETting a Student Location - https://parse.udacity.com/parse/classes/StudentLocation
+
+        static let UdacityApiScheme = "https"
+        static let UdacityApiHost = "udacity.com"
+        static let UdacityApiPath = "/api"
+
 //        https://www.udacity.com/api/session POSTing a Session - WITHOUT FACEBOOK
 //        https://www.udacity.com/api/users - GETting Public User Data
 //        https://www.udacity.com/api/session - DELETEing a Session
@@ -122,7 +124,11 @@ extension UdacityClient { // Instead of storing them under UdacityClient, I just
         // post a session - login
         static let Session = "session"
         static let SessionID = "id"
-        static let AccountKey = "key" // = UniqueKey
+        static let AccountKey = "key" // = UserID
+        static let User = "user" // Keys from .getUserID
+        static let Account = "account"
+        static let UserID = "UserID"
+        
         
         // get public data - ?? what do i want to store from the response???
         

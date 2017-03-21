@@ -12,23 +12,23 @@ struct StudentLocation {
     // Properties
     let firstName: String
     let lastName: String
-    let latitude: Float
-    let longitude: Float
+    let latitude: Double
+    let longitude: Double
     let mapString: String
     let mediaURL: String
     let objectId: String
-    let userID: Int
+    let userID: String
     
     // Initializers - when Struct StudentLocation is called -> expect to pass [String:AnyObject] -> and what to do with it
     init(dictionary: [String:AnyObject]) {
-        firstName = dictionary["firstName"] as! String
-        lastName = dictionary["lastName"] as! String
-        latitude = dictionary["latitude"] as! Float
-        longitude = dictionary["longitude"] as! Float
-        mapString = dictionary["mapString"] as! String
-        mediaURL = dictionary["mediaURL"] as! String
-        objectId = dictionary["objectId"] as! String
-        userID = dictionary["uniqueKey"] as! Int
+        firstName = dictionary["firstName"] != nil ? dictionary["firstName"] as! String: ""
+        lastName = dictionary["lastName"] != nil ? dictionary["lastName"] as! String : ""
+        latitude = dictionary["latitude"] != nil ? dictionary["latitude"] as! Double: 0
+        longitude = dictionary["longitude"] != nil ? dictionary["longitude"] as! Double: 0
+        mapString = dictionary["mapString"] != nil ? dictionary["mapString"] as! String: ""
+        mediaURL = dictionary["mediaURL"] != nil ? dictionary["mediaURL"] as! String: ""
+        objectId = dictionary["objectId"] != nil ? dictionary["objectId"] as! String: ""
+        userID = dictionary["uniqueKey"] != nil ? dictionary["uniqueKey"] as! String: ""
     }
     
     static func StudentsLocationsFromResults(_ results: [[String: AnyObject]]) -> [StudentLocation] {
@@ -37,9 +37,10 @@ struct StudentLocation {
         var studentsLocations = [StudentLocation]()   // empty Struct studentLocations containing lots of individual [StudentLocation]
         
         for result in results {
+            
             studentsLocations.append(StudentLocation(dictionary: result)) // when appending 1. a STRUCT StudentLocation -> append(StudentLocation(....)), it starts 2.to all initialize - means creating a dictionary which is "result" and put matching value to it - i.e. "dictionary: result"
         }
-        
+        print("studentsLocations from StudentsLocationsFromResults is... \(studentsLocations)")
         return studentsLocations
         
         

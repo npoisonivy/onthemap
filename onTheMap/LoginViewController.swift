@@ -15,7 +15,7 @@ class LoginViewController: UIViewController {
 //    var appDelegate: AppDelegate! - We can either place info such as sessionID, userID @ appDelegate, but I choose to store it @ UdacityClient.swift where stores everything a client does = make GET/ POST request "taskforGETRequest", etc
     var keyboardOnScreen = false
     var session: URLSession!
-    var udacityClient: UdacityClient  // so i can call class UdacityClient's (for logged in user) properties there - ex: UserID, firstName, lastName
+    var udacityClass: UdacityClient? // so i can call class UdacityClient's (for logged in user) properties there - ex: UserID, firstName, lastName
     
     
     // MARK: Outlets
@@ -31,6 +31,7 @@ class LoginViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad() // what does this mean?
 //        configureBackground() - do i need this ?? what is the code for "orange"? This is for blue
+//        udacityClient = 
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -50,22 +51,42 @@ class LoginViewController: UIViewController {
     @IBAction func loginPressed(_ sender: AnyObject) {  // i have to change from "Any" to "AnyObject"
 //        userDidTapView(self)  - add this for textfield delegate
         
+        // did this go through ?
         if emailTextField.text!.isEmpty || passwordTextField.text!.isEmpty {
             debugTextLabel.text = "Email or Password Empty!"
+            return
         } else { // if everything is filled...
             setUIenabled(false) // disable email, pw, loginbutton everything while sending networking request
             
-            // make the request to Udacity for authentication - send POST email, password to parse server - to get session id -> so what am i going to do with that session id?
-            UdacityClient.sharedInstance().authenticateWithUserCredentials(emailTextField.text!, passwordTextField.text!)
+            // set & save username, password to class UdacityClient, so I can retrieve anywhere from other pages - like "UdacityConvenience"
             
-            // above will return "error"/ "success" back to here.
-            // if error, then debugTextLabel.text = "Incorrect password/ username"
+            udacityClass?.userID = emailTextField.text!
+            udacityClass?.password = passwordTextField.text!
+            print("udacityClient?.username is... \(udacityClass?.username)")  // udacityClient?.username is... nil
+            
+        }
+    // make the request to Udacity for authentication - send POST email, password to parse server - to get session id -> so what am i going to do with that session id?
+//            UdacityClient.sharedInstance().authenticateWithUserCredentials(emailTextField.text!, passwordTextField.text!)
         
-            // if success, then do below:
-            let controller = storyboard!.instantiateViewController(withIdentifier: "TabbedNavigationController") as! UINavigationController
-            print("controller is ...\(controller)")
-            present(controller, animated: true, completion: nil)
-            
+        UdacityClient.sharedInstance().authenticateWithViewController(self) {(success, errorString) in
+            performUIUpdatesOnMain {
+                if success { // when I pass success/ error to authenticateWithViewController's completion handler
+                    self.completeLogin()
+                } else {
+                    self.displayError(errorString) // errorString from either getUserID or getPublicData
+                }
+            } // end of performUIUpdatesOnMain
+        } // end of authenticateWithViewController
+        
+        
+        
+        
+
+        // above will return "error"/ "success" back to here.
+        // if error, then debugTextLabel.text = "Incorrect password/ username"
+    
+      
+    }  // end of loginPressed
 //
             
             
@@ -81,19 +102,15 @@ class LoginViewController: UIViewController {
 //                else
 //            self.displayErrory(errorString - that is being passed)
             
-            
-        }
-    }
-    
     
 // *** uncomment below after this func is being mentioned + TabbedViewController is created on MSB
-//    private func completeLogin() {
-//        debugTextLabel.text = ""
-//        let controller = storyboard!.instantiateViewController(withIdentifier: "ManagerNavigationController") as! UINavigationController
-//        present(controller, animated: true, completion: nil)
-//    }
-//}
-}
+    private func completeLogin() {
+        debugTextLabel.text = ""
+        let controller = storyboard!.instantiateViewController(withIdentifier: "TabbedViewController") as! UITabBarController
+        print("controller is ...\(controller)")
+        present(controller, animated: true, completion: nil)
+    } // end of completeLogin
+} // end of class LoginViewController
 
 
 
@@ -112,6 +129,7 @@ private extension LoginViewController {
         } else {
             loginButton.alpha = 0.5
         }
+    
     }
     
     func displayError(_ errorString: String?) {
@@ -119,7 +137,7 @@ private extension LoginViewController {
             debugTextLabel.text = errorString
         }
     }
-    
+}
 
     // I didn't add below in - as it's related to UI, front end
 //    func configureUI() {
@@ -148,4 +166,4 @@ private extension LoginViewController {
 //    }
 //}
 
-}
+

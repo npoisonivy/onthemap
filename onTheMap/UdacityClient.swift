@@ -5,13 +5,12 @@
 //  Created by Nikki L on 2/28/17.
 //  Copyright © 2017 Nikki. All rights reserved.
 //
-
+import UIKit // needed???
 import Foundation
 // should store below items:
 // data: session, session; taskForGETMethod, taskForPOSTMethod, helper func "substitueKeyInMethod" if we need to pass a var like student_id in the url, converDataWithCompletionHandler (deal with data - ParsedResult), studentURLFromParameters - create a URL from parameters, shareInstance.
 
-class UdacityClient: NSObject {
-    // save loginUser properties here
+class UdacityClient: NSObject { // save loginUser properties here!!
     
     // MARK: Properties
     
@@ -20,11 +19,19 @@ class UdacityClient: NSObject {
     
     // authentication state
     var sessionID: String? = nil
-    var userID: Int? = nil // = uniqueKey
+    var userID: String? = nil // = uniqueKey
+    
+    // from logged in user
+    var username: String? = nil    // must put "nil" otherwise, error: Instance member '' cannot be used on type 'udacityClass'
+
+    var password: String? = nil
     
     // from calling GET public data
     var firstName: String? = nil 
     var lastName: String? = nil
+    
+    // url 
+    var baseURL: String? = nil
     
     // MARK: Initializers
     
@@ -40,6 +47,7 @@ class UdacityClient: NSObject {
 //        parametersWithApiKey[ParameterKeys.ApiKey] = Constants.ApiKey as AnyObject? - we don;t need api key
         
         /* 2/3. Build the URL, Configure the request */
+        
         let request = NSMutableURLRequest(url: studentURLFromParameters(parameters, withPathExtension: method)) // return a nice url with complete stuff : "https://parse.udacity.com/parse/classes/StudentLocation?limit=100&skip=400&order=-updatedAt"
         // "method" is the part that is outside of base url - like "classes/StudentLocation"
         request.addValue("QrX47CA9cyuGewLdsL7o5Eb8iug6Em8ye0dnAbIr", forHTTPHeaderField: "X-Parse-Application-Id")
@@ -109,8 +117,11 @@ class UdacityClient: NSObject {
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Accept")
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = jsonBody.data(using: String.Encoding.utf8)
+        request.addValue("QrX47CA9cyuGewLdsL7o5Eb8iug6Em8ye0dnAbIr", forHTTPHeaderField: "X-Parse-Application-Id")
+        request.addValue("QuWThTdiRmTux3YaDseUSEpUKo7aBYM737yKd4gY", forHTTPHeaderField: "X-Parse-REST-API-Key")
+        request.httpBody = jsonBody.data(using: String.Encoding.utf8)   // taskForPOSTMethod expects input "jsonBody"
         
+        print("request is... \(request)")
         /* 4. Make the request */
         let task = session.dataTask(with: request as URLRequest) { (data, response, error) in
             
@@ -170,24 +181,38 @@ class UdacityClient: NSObject {
             let userInfo = [NSLocalizedDescriptionKey : "Could not parse the data as JSON: '\(data)'"]
             completionHandlerForConvertData(nil, NSError(domain: "convertDataWithCompletionHandler", code: 1, userInfo: userInfo))
         }
-        
+        print("parsedResult is...\(parsedResult) from func convertDataWithCompletionHandler")
         completionHandlerForConvertData(parsedResult, nil)
     }
     
     // create a URL from parameters
     private func studentURLFromParameters(_ parameters: [String:AnyObject], withPathExtension: String? = nil) -> URL {
         
+        // condition added here... to decide what url to call
+       
+        print("baseURL is.. \(baseURL)") // applied to both taskForGETMethod & taskForPOSTMethod
         var components = URLComponents()
-        components.scheme = UdacityClient.Constants.ApiScheme
-        components.host = UdacityClient.Constants.ApiHost
-        components.path = UdacityClient.Constants.ApiPath + (withPathExtension ?? "")
+        
+        if baseURL == "parse" {   // ApiHost = "parse.udacity.com"
+            print("parse.udacity.com is called")
+            components.scheme = UdacityClient.Constants.ApiScheme
+            components.host = UdacityClient.Constants.ApiHost
+            components.path = UdacityClient.Constants.ApiPath + (withPathExtension ?? "")
+            
+        } else {   // UdacityApiHost = "udacity.com"
+            print("udacity.com is called")
+            components.scheme = UdacityClient.Constants.UdacityApiScheme
+            components.host = UdacityClient.Constants.UdacityApiHost
+            components.path = UdacityClient.Constants.UdacityApiPath + (withPathExtension ?? "")
+            
+        }
         components.queryItems = [URLQueryItem]()
         
         for (key, value) in parameters {
             let queryItem = URLQueryItem(name: key, value: "\(value)")
             components.queryItems!.append(queryItem)
         }
-        
+        print("url is... \(components.url)")
         return components.url!
     }
 

@@ -32,17 +32,6 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-//        // getStudentsLocations() from UdacityConvenience.swift where the whole file is an extension of UdacityClient - "extension UdacityClient"
-//        UdacityClient.sharedInstance().getStudentsLocations { (namethisanything, error) in
-//            if let locations = namethisanything {
-//                self.locations = locations
-//                performUIUpdatesOnMain {
-////                    self.mapView.reloadData() // does not work...
-//                    
-//                }
-//            }
-//        }
-        
         
         
     }
