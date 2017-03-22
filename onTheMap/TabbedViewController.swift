@@ -39,7 +39,7 @@ class TabbedViewController: UITabBarController {
             let range = Range(uncheckedBounds: (5, data!.count - 5))
             let newData = data?.subdata(in: range) /* subset response data! */
             print("Logout is pressed, results as below")
-
+            // do it right with "Encoding.utf8.rawValue" since call is to udacity.com
             print(NSString(data: newData!, encoding: String.Encoding.utf8.rawValue)!)
         }
         task.resume()

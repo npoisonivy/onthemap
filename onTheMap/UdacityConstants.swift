@@ -32,6 +32,7 @@ extension UdacityClient { // Instead of storing them under UdacityClient, I just
         static let UdacityApiHost = "udacity.com"
         static let UdacityApiPath = "/api"
 
+        // @ func convertDataWithCompletionHandler - add this line - let range = Range(5 ..< data!.count), only for Udacity API
 //        https://www.udacity.com/api/session POSTing a Session - WITHOUT FACEBOOK
 //        https://www.udacity.com/api/users - GETting Public User Data
 //        https://www.udacity.com/api/session - DELETEing a Session
@@ -46,7 +47,7 @@ extension UdacityClient { // Instead of storing them under UdacityClient, I just
         // udacity - session
         static let Session = "/session"
         static let Users = "/users"
-        static let PublicData = "/users/{UserID}"
+        static let PublicData = "/users/{id}"
     }
     
     // MARK: URL Keys - that will be pass in a URL link

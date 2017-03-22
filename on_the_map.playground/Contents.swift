@@ -153,7 +153,10 @@ task.resume()
 //        return
 //    }
 //    let range = Range(uncheckedBounds: (5, data!.count - 5))
-//    let newData = data?.subdata(in: range) /* subset response data! */
+// forum says: let range = Range(uncheckedBounds: (5, data.count))
+// let range = Range(uncheckedBounds: (5, data.count))
+//let newData = data.subdata(in: range) /* subset response data! */
+
 //    print(NSString(data: newData!, encoding: String.Encoding.utf8.rawValue)!)
 //}
 //task.resume()

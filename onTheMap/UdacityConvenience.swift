@@ -60,7 +60,7 @@ extension UdacityClient {
 //                completionHandlerForAuth(success, errorString)  // pass "can't retrieve user id" from .getUserID
 //            }
 //        } // end of .getUserID
-//
+////
         
         
         // must pass the (completionHandlerForAuth: xxx, xxx) - so the LoginVC where .authenticateWithViewController is calling - can receive the returned "success/ errostring" - and upon those return, either completeLogin() or displayError will be called
@@ -159,12 +159,10 @@ extension UdacityClient {
         self.baseURL = "udacity"
         
         // need substituteKeyInMethod to hard code  - i need to set its value on Udacityclient class! and remove
-        var mutableMethod: String = Methods.Users
-        print(UdacityClient.sharedInstance().userID) // Optional("3903878747")
-        print(mutableMethod)
-        print(URLKeys.UserID)
+        var mutableMethod: String = Methods.PublicData //https://www.udacity.com/api/users/id   static let PublicData = "/users/{id}"
+       // print(UdacityClient.sharedInstance().userID) // Optional("3903878747") hard coded @ UdacityClient.swift
         
-        mutableMethod = substituteKeyInMethod(mutableMethod, key: "id", value: "3903878747")!
+        mutableMethod = substituteKeyInMethod(mutableMethod, key: URLKeys.UserID , value: UdacityClient.sharedInstance().userID!)!
         print("mutableMethod after transformation of substituteKey is .. \(mutableMethod)")
        // mutableMethod = substituteKeyInMethod(mutableMethod, key: URLKeys.UserID, value: UdacityClient.sharedInstance().userID!)!  // right now hard code it as "3903878747" at UdacityClient.swift
         

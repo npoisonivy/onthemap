@@ -174,11 +174,26 @@ class UdacityClient: NSObject { // save loginUser properties here!!
     // given raw JSON, return a usable Foundation object
     
     private func convertDataWithCompletionHandler(_ data: Data, completionHandlerForConvertData: (_ result: AnyObject?, _ error: NSError?) -> Void) {
+        // let newData = data.subdataWithRange(NSMakeRange(5, data.length - 5))
+        // println(NSString(data: newData, encoding: NSUTF8StringEncoding))
         
+        if self.baseURL == "udacity" {  // getUserID (= post session), delete a session, get public data
+            var data = data
+            let range = Range(uncheckedBounds: (5, data.count))
+            data = data.subdata(in: range) /* subset response data! */
+            print("data from convertDataWithCompletionHandler's self.baseurl = 'udacity'")
+            print(NSString(data: data, encoding: String.Encoding.utf8.rawValue)!)
+        }
+        
+        
+        // it works for self.baseURL = "parse", but not for "udacity"!
         var parsedResult: AnyObject! = nil
         do {
+            print("@ do statement... ")
+            
+            print(NSString(data: data, encoding: String.Encoding.utf8.rawValue)!)
             parsedResult = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as AnyObject
-            print("parsedResult is ...\(parsedResult)")
+            // print("parsedResult is ...\(parsedResult)")
             
         } catch {
             let userInfo = [NSLocalizedDescriptionKey : "Could not parse the data as JSON: '\(data)'"]
