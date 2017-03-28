@@ -24,7 +24,6 @@
 		A06E99B41E66957E000A4D93 /* UdacityConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06E99B31E66957E000A4D93 /* UdacityConfig.swift */; };
 		A06E99B61E6695A3000A4D93 /* UdacityStudentLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06E99B51E6695A3000A4D93 /* UdacityStudentLocation.swift */; };
 		A06E99B81E66963A000A4D93 /* BorderedButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06E99B71E66963A000A4D93 /* BorderedButton.swift */; };
-		A0F342131E6DFFA20035C156 /* MediaPostingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F342121E6DFFA20035C156 /* MediaPostingViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -47,7 +46,6 @@
 		A06E99B31E66957E000A4D93 /* UdacityConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UdacityConfig.swift; sourceTree = "<group>"; };
 		A06E99B51E6695A3000A4D93 /* UdacityStudentLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UdacityStudentLocation.swift; sourceTree = "<group>"; };
 		A06E99B71E66963A000A4D93 /* BorderedButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BorderedButton.swift; path = onTheMap/BorderedButton.swift; sourceTree = "<group>"; };
-		A0F342121E6DFFA20035C156 /* MediaPostingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaPostingViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,7 +113,6 @@
 				A06E99A31E66919A000A4D93 /* LoginViewController.swift */,
 				A04166471E6A072400E6FC68 /* StudentsTableViewController.swift */,
 				A041664D1E6B4CC500E6FC68 /* MapViewController.swift */,
-				A0F342121E6DFFA20035C156 /* MediaPostingViewController.swift */,
 				A06E99A51E6691E8000A4D93 /* TabbedViewController.swift */,
 				A06E99A71E66920B000A4D93 /* InformationPostingViewController.swift */,
 			);
@@ -237,7 +234,6 @@
 				A06E99B81E66963A000A4D93 /* BorderedButton.swift in Sources */,
 				A06E99881E668E80000A4D93 /* ViewController.swift in Sources */,
 				A06E99991E668F48000A4D93 /* GCDBlackBox.swift in Sources */,
-				A0F342131E6DFFA20035C156 /* MediaPostingViewController.swift in Sources */,
 				A06E99861E668E80000A4D93 /* AppDelegate.swift in Sources */,
 				A041664E1E6B4CC500E6FC68 /* MapViewController.swift in Sources */,
 				A06E99B01E669560000A4D93 /* UdacityClient.swift in Sources */,
