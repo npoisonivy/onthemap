@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="15G1212" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="m8f-Px-oY3">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="15G1212" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="Dyq-eH-tsN">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -191,7 +191,7 @@
                                 <rect key="frame" x="0.0" y="28" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="U6L-L1-Mzq" id="WGQ-fx-4rl">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
@@ -318,6 +318,80 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" translatesAutoresizingMaskIntoConstraints="NO" id="Dh5-e4-zJ3" userLabel="MediaURL Posting StackView">
+                                <rect key="frame" x="0.0" y="64" width="376" height="600"/>
+                                <subviews>
+                                    <stackView contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="Uld-FZ-Byq" userLabel="top2">
+                                        <rect key="frame" x="0.0" y="0.0" width="376" height="173"/>
+                                        <subviews>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aJN-7B-PYl">
+                                                <rect key="frame" x="0.0" y="0.0" width="376" height="173"/>
+                                                <subviews>
+                                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter Your Media URL here" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="nnp-Rv-lj7">
+                                                        <rect key="frame" x="28" y="21" width="320" height="30"/>
+                                                        <nil key="textColor"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                                        <textInputTraits key="textInputTraits"/>
+                                                    </textField>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="debug" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lnu-W6-49h">
+                                                        <rect key="frame" x="125" y="99" width="126" height="24"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                                        <nil key="textColor"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                </subviews>
+                                                <color key="backgroundColor" red="0.37319399289999999" green="0.5986772722" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="trailing" secondItem="nnp-Rv-lj7" secondAttribute="trailing" constant="28" id="Mxp-7b-fXU"/>
+                                                    <constraint firstItem="nnp-Rv-lj7" firstAttribute="top" secondItem="aJN-7B-PYl" secondAttribute="top" constant="21" id="rH3-WP-Ymf"/>
+                                                    <constraint firstItem="nnp-Rv-lj7" firstAttribute="leading" secondItem="aJN-7B-PYl" secondAttribute="leading" constant="28" id="xju-fw-o9K"/>
+                                                </constraints>
+                                            </view>
+                                        </subviews>
+                                        <color key="backgroundColor" red="0.43947967577091573" green="0.72861435602626456" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                    </stackView>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="00T-EL-u11" userLabel="bottom2">
+                                        <rect key="frame" x="0.0" y="173" width="376" height="427"/>
+                                        <subviews>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hyh-Kl-MxO">
+                                                <rect key="frame" x="0.0" y="0.0" width="376" height="427"/>
+                                                <subviews>
+                                                    <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="GCk-GJ-vLV">
+                                                        <rect key="frame" x="0.0" y="0.0" width="376" height="427"/>
+                                                    </mapView>
+                                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="T0k-eD-x3f">
+                                                        <rect key="frame" x="111" y="326" width="155" height="30"/>
+                                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="25"/>
+                                                        <state key="normal" title="Submit"/>
+                                                        <connections>
+                                                            <action selector="submitMediaURL:" destination="cyj-9S-jcW" eventType="touchUpInside" id="Glx-V2-JYM"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                                <constraints>
+                                                    <constraint firstAttribute="bottom" secondItem="GCk-GJ-vLV" secondAttribute="bottom" id="E8r-hs-Q7E"/>
+                                                    <constraint firstAttribute="trailing" secondItem="T0k-eD-x3f" secondAttribute="trailing" constant="110" id="Eh2-Ip-St6"/>
+                                                    <constraint firstAttribute="trailing" secondItem="GCk-GJ-vLV" secondAttribute="trailing" id="RIA-DD-6GU"/>
+                                                    <constraint firstItem="GCk-GJ-vLV" firstAttribute="leading" secondItem="hyh-Kl-MxO" secondAttribute="leading" id="kGV-qR-Shr"/>
+                                                    <constraint firstAttribute="bottom" secondItem="T0k-eD-x3f" secondAttribute="bottom" constant="71" id="kmX-oi-OUN"/>
+                                                    <constraint firstItem="T0k-eD-x3f" firstAttribute="leading" secondItem="hyh-Kl-MxO" secondAttribute="leading" constant="111" id="meF-SY-84w"/>
+                                                    <constraint firstItem="GCk-GJ-vLV" firstAttribute="top" secondItem="hyh-Kl-MxO" secondAttribute="top" id="tS9-Aa-36X"/>
+                                                </constraints>
+                                            </view>
+                                        </subviews>
+                                    </stackView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="Uld-FZ-Byq" firstAttribute="leading" secondItem="Dh5-e4-zJ3" secondAttribute="leading" id="4jE-Od-P1d"/>
+                                    <constraint firstAttribute="trailing" secondItem="00T-EL-u11" secondAttribute="trailing" id="Jrn-Jp-Jzb"/>
+                                    <constraint firstAttribute="bottom" secondItem="00T-EL-u11" secondAttribute="bottom" id="YSo-GW-D33"/>
+                                    <constraint firstAttribute="trailing" secondItem="Uld-FZ-Byq" secondAttribute="trailing" id="hqZ-7N-IrF"/>
+                                    <constraint firstItem="00T-EL-u11" firstAttribute="leading" secondItem="Dh5-e4-zJ3" secondAttribute="leading" id="r1T-F5-M46"/>
+                                    <constraint firstItem="Uld-FZ-Byq" firstAttribute="top" secondItem="Dh5-e4-zJ3" secondAttribute="top" id="xVL-gE-i0z"/>
+                                </constraints>
+                            </stackView>
                             <stackView hidden="YES" opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" translatesAutoresizingMaskIntoConstraints="NO" id="kC3-3n-utx" userLabel="Location Posting StackView">
                                 <rect key="frame" x="0.0" y="64" width="375" height="600"/>
                                 <subviews>
@@ -418,76 +492,6 @@
                                     <constraint firstAttribute="trailing" secondItem="saZ-9A-Jd0" secondAttribute="trailing" id="wE6-DW-a3Y"/>
                                 </constraints>
                             </stackView>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" translatesAutoresizingMaskIntoConstraints="NO" id="Dh5-e4-zJ3" userLabel="MediaURL Posting StackView">
-                                <rect key="frame" x="0.0" y="64" width="376" height="600"/>
-                                <subviews>
-                                    <stackView contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="Uld-FZ-Byq" userLabel="top2">
-                                        <rect key="frame" x="0.0" y="0.0" width="376" height="280.5"/>
-                                        <subviews>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aJN-7B-PYl">
-                                                <rect key="frame" x="0.0" y="0.0" width="376" height="280.5"/>
-                                                <subviews>
-                                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter Your Media URL here" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="nnp-Rv-lj7">
-                                                        <rect key="frame" x="28" y="21" width="320" height="30"/>
-                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                        <nil key="textColor"/>
-                                                        <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                                        <textInputTraits key="textInputTraits"/>
-                                                    </textField>
-                                                </subviews>
-                                                <color key="backgroundColor" red="0.37319399289999999" green="0.5986772722" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                            </view>
-                                        </subviews>
-                                        <color key="backgroundColor" red="0.43947967577091573" green="0.72861435602626456" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                    </stackView>
-                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="gJL-3R-bXc" userLabel="middle&amp;bottom">
-                                        <rect key="frame" x="0.0" y="280.5" width="376" height="319.5"/>
-                                        <subviews>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="01g-7h-uvY">
-                                                <rect key="frame" x="0.0" y="0.0" width="376" height="319.5"/>
-                                                <subviews>
-                                                    <stackView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="md7-i2-rMj" userLabel="middle2">
-                                                        <rect key="frame" x="0.0" y="-158" width="376" height="294"/>
-                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                        <subviews>
-                                                            <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7eo-5s-g6G">
-                                                                <rect key="frame" x="0.0" y="0.0" width="376" height="294"/>
-                                                                <color key="backgroundColor" red="1" green="0.28887106070000002" blue="0.25437155430000002" alpha="1" colorSpace="calibratedRGB"/>
-                                                            </view>
-                                                        </subviews>
-                                                    </stackView>
-                                                    <stackView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="mJ1-Dr-LCL" userLabel="bottom2">
-                                                        <rect key="frame" x="0.0" y="-50" width="376" height="99"/>
-                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    </stackView>
-                                                    <view opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Pkj-d1-Qgp">
-                                                        <rect key="frame" x="0.0" y="135" width="376" height="99"/>
-                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                        <subviews>
-                                                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7nV-JC-Ad8">
-                                                                <rect key="frame" x="130" y="51" width="116" height="30"/>
-                                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                                <fontDescription key="fontDescription" type="system" pointSize="22"/>
-                                                                <state key="normal" title="Submit"/>
-                                                            </button>
-                                                        </subviews>
-                                                        <color key="backgroundColor" red="1" green="0.0" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                                    </view>
-                                                </subviews>
-                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                            </view>
-                                        </subviews>
-                                    </stackView>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="Uld-FZ-Byq" secondAttribute="trailing" id="2a0-eK-7jB"/>
-                                    <constraint firstItem="Uld-FZ-Byq" firstAttribute="leading" secondItem="Dh5-e4-zJ3" secondAttribute="leading" id="RRr-4P-CAF"/>
-                                    <constraint firstAttribute="trailing" secondItem="gJL-3R-bXc" secondAttribute="trailing" id="TZY-nT-hg5"/>
-                                    <constraint firstItem="Uld-FZ-Byq" firstAttribute="top" secondItem="Dh5-e4-zJ3" secondAttribute="top" id="YRT-R8-ZGF"/>
-                                    <constraint firstAttribute="bottom" secondItem="gJL-3R-bXc" secondAttribute="bottom" id="g8s-PE-Lhv"/>
-                                    <constraint firstItem="gJL-3R-bXc" firstAttribute="leading" secondItem="Dh5-e4-zJ3" secondAttribute="leading" id="vZm-G2-0L1"/>
-                                </constraints>
-                            </stackView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -512,6 +516,9 @@
                         <outlet property="debugArea" destination="dEI-7h-D1h" id="w79-X4-fcV"/>
                         <outlet property="locationInput" destination="3ns-aA-fcc" id="lpI-cE-AJV"/>
                         <outlet property="locationPostingStackView" destination="kC3-3n-utx" id="ZhL-BT-0P3"/>
+                        <outlet property="mapView" destination="GCk-GJ-vLV" id="Yfw-2S-yhg"/>
+                        <outlet property="mediaDebug" destination="Lnu-W6-49h" id="Js3-Vv-1qv"/>
+                        <outlet property="mediaURL" destination="nnp-Rv-lj7" id="zW9-d9-qpD"/>
                         <outlet property="mediaURLPostingStackView" destination="Dh5-e4-zJ3" id="TzN-pS-Sat"/>
                     </connections>
                 </viewController>

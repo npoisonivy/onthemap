@@ -32,6 +32,12 @@ class UdacityClient: NSObject { // save loginUser properties here!!
     // url 
     var baseURL: String? = nil
     
+    // GeoCoding
+    var latitude: Double? = nil
+    var longitude: Double? = nil
+    
+    var mediaURL: String? = nil
+    
     // MARK: Initializers
     
     override init() {

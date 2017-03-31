@@ -8,6 +8,9 @@
 
 import UIKit
 import Foundation
+import CoreLocation
+import AddressBookUI
+import MapKit
 
 // MARK: - UdacityClient (Convenient Resource Methods)
 
@@ -254,7 +257,7 @@ extension UdacityClient {
                     completionHandlerForGetStudentLocations(nil, NSError(domain: "getFavoriteMovies parsing", code: 0, userInfo: [NSLocalizedDescriptionKey: "Could not parse getStudentLocations"]))
                 }
             }
-        }
+        }  // end of let_ = taskForGETMethod
         
         // this func will return lots of things, we only need : user id + fn, ln, and media url only -> when result is done -> check if userid is in any of the result -> if false -> then HTTP METHOD = "POST", else HTTP METHOD = "PUT"
 //        let request = NSMutableURLRequest(url: URL(string: "https://parse.udacity.com/parse/classes/StudentLocation?limit=100&skip=400&order=-updatedAt")!)
@@ -271,7 +274,102 @@ extension UdacityClient {
 //        task.resume()
 //    }
     
+    } // end of func getStudentsLocations
+    // v1 - check what is the data type to return - Placemark - is [] array
+//    func forwardGeocoding(_ address: String){
+//        CLGeocoder().geocodeAddressString(String) { ([CLPlacemark]?, Error?) in
+//            code
+//        }
+//    }
+
+    func forwardGeocoding(_ address: String, _ completionHandlerForGeoCoding: @escaping (_ latitude: Double?, _ longitude: Double?, _ error: NSError?) -> Void) {
+        
+        CLGeocoder().geocodeAddressString(address) { (placemarks, error) in
+            
+            func sendError(_ error: String) {
+                print(error)
+                let userInfo = [NSLocalizedDescriptionKey: error]
+                completionHandlerForGeoCoding(nil, nil, NSError(domain: "forwardGeocoding", code: 1, userInfo: userInfo)) // this will be passed to InfoPostViewController
+            }
+            
+            if error != nil {
+                
+                sendError("There was an error with the request: \(error)")
+                // when error is returned, it passed to sendError() that triggers to pass no result, and NSerror to completionHandlerForGeoCoding() where is called @ InfoPostVC
+    
+            } else {
+                // break down placemarks (comes back as Array) first before passing over?
+                
+                if let geoCodeResult = placemarks {
+                    print("placemarks is \(geoCodeResult)")
+                    let placemark = geoCodeResult[0]
+                    let location = placemark.location
+                    let coordinate = location?.coordinate
+                    let latitude = coordinate?.latitude   // CLLocationDegree is type of Double, not float
+                    let longitude = coordinate?.longitude
+                    
+                    completionHandlerForGeoCoding(latitude, longitude, nil)
+                    // pass placemarks to completionhandler... to handle it @ InformationPostingViewController view
+                } // end of  "if let geoCodeResult"
+            
+            } // end of else
+        } // end of CLGeocoder().geocodeAddressString
+    } // end of func forwardGeocoding
+    
+    
+    // For Mapview @ MediaURL Posting StackView
+    // when user clicks "Find on Map", after running func forwardGeocoding, run this.
+    func placeAnnotation() -> [MKPointAnnotation] {
+        
+        var annotationList = [MKPointAnnotation]() // need to create an array because to add annotation, need to use "addAnnotations" - that expects ARRAY
+        
+        let lat = CLLocationDegrees(UdacityClient.sharedInstance().latitude!)
+        let long = CLLocationDegrees(UdacityClient.sharedInstance().longitude!)
+        //  is already Double, so no need to convert to match CLLocationDegrees Double "type"
+        
+        let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
+        
+        // add coordinate to annotation - 1 set
+        let annotation = MKPointAnnotation()
+        annotation.coordinate = coordinate
+        
+        
+        // append annotation (= 1 set) to annotationList
+        annotationList.append(annotation)    // able to add pin on map - BUT didn't zoom in..
+        
+        return annotationList   // pass back to View of MSB, so u can update mapView
+        
+    } // end of func placeAnnotation
+    
+    func submitStudentLoc() {
+        // call get a student location
+        let state = getaStudentloc(){(state)} as Bool
+        if state { // true - have record already
+            // call PUT request
+        } else {  // false - no record before
+            // call POST request
+        }
+        
     }
-}
+    
+    func getaStudentloc(_ completionHandlerForGETaStudentLoc: @escaping (_ state: Bool, _ errorString: String?) -> Void ) {
+        // need unqiue key!
+        let uniqueKey = UdacityClient.sharedInstance().userID  // var userID: String? = "3903878747"
+        
+        // return count back to submitStudentLoc
+    }
+    
+    
+    
+}  // end of class
+
+
+
+
+
+
+
+
+
 
 

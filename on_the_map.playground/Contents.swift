@@ -5,7 +5,18 @@ import PlaygroundSupport
 
 // this line tells the Playground to execute indefinitely
 PlaygroundPage.current.needsIndefiniteExecution = true
+
+
 //
+//let session = URLSession.shared
+//let task = session.dataTask(with: request as URLRequest) { data, response, error in
+//    if error != nil { // Handle error...
+//        return
+//    }
+//    print(NSString(data: data!, encoding: String.Encoding.utf8.rawValue)!)
+//}
+//task.resume()
+
 //let urlString = "http://quotes.rest/qod.json?category=inspire"
 //let url = URL(string: urlString)
 //let request = NSMutableURLRequest(url: url!)
@@ -19,22 +30,22 @@ PlaygroundPage.current.needsIndefiniteExecution = true
 //task.resume()
 
 // POSTing a Session - WITHOUT FACEBOOK
-let request = NSMutableURLRequest(url: URL(string: "https://www.udacity.com/api/session")!)
-request.httpMethod = "POST"
-request.addValue("application/json", forHTTPHeaderField: "Accept")
-request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-request.httpBody = "{\"udacity\": {\"username\": \"spacenikki@gmail.com\", \"password\": \"wifi=123\"}}".data(using: String.Encoding.utf8)
-
-let session = URLSession.shared
-let task = session.dataTask(with: request as URLRequest) { data, response, error in
-    if error != nil { // Handle error…
-        return
-    }
-    let range = Range(uncheckedBounds: (5, data!.count - 5))
-    let newData = data?.subdata(in: range) /* subset response data! */
-    print(NSString(data: newData!, encoding: String.Encoding.utf8.rawValue)!)
-}
-task.resume()
+//let request = NSMutableURLRequest(url: URL(string: "https://www.udacity.com/api/session")!)
+//request.httpMethod = "POST"
+//request.addValue("application/json", forHTTPHeaderField: "Accept")
+//request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+//request.httpBody = "{\"udacity\": {\"username\": \"spacenikki@gmail.com\", \"password\": \"wifi=123\"}}".data(using: String.Encoding.utf8)
+//
+//let session = URLSession.shared
+//let task = session.dataTask(with: request as URLRequest) { data, response, error in
+//    if error != nil { // Handle error…
+//        return
+//    }
+//    let range = Range(uncheckedBounds: (5, data!.count - 5))
+//    let newData = data?.subdata(in: range) /* subset response data! */
+//    print(NSString(data: newData!, encoding: String.Encoding.utf8.rawValue)!)
+//}
+//task.resume()
 //
 //// DELETEing a Session
 //let request = NSMutableURLRequest(url: URL(string: "https://www.udacity.com/api/session")!)
