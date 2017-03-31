@@ -48,9 +48,9 @@ PlaygroundPage.current.needsIndefiniteExecution = true
 //let urlString = "https://parse.udacity.com/parse/classes/StudentLocation"
 // let urlString = "https://parse.udacity.com/parse/classes/StudentLocation?where=%7B%22uniqueKey%22%3A%221234%22%7D"  //uniqueKey = 1234
 
-let urlString = "https://parse.udacity.com/parse/classes/StudentLocation?where={\"unqiueKey\":\"1234\"}"  //uniqueKey = 1234
+// let urlString = "https://parse.udacity.com/parse/classes/StudentLocation?where={\"unqiueKey\":\"1234\"}"  //uniqueKey = 1234
 
-// let urlString = "https://parse.udacity.com/parse/classes/StudentLocation?where=%7B%22uniqueKey%22%3A%225555%22%7D"  //uniqueKey = 5555
+let urlString = "https://parse.udacity.com/parse/classes/StudentLocation?where=%7B%22uniqueKey%22%3A%225555%22%7D"  //uniqueKey = 5555
 
 let url = URL(string: urlString)
 let request = NSMutableURLRequest(url: url!)

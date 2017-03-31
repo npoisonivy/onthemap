@@ -40,7 +40,7 @@ extension UdacityClient { // Instead of storing them under UdacityClient, I just
     
     // MARK: Methods
     struct Methods {
-        // student location
+        // student location OR get A student location
         static let StudentLocation = "/classes/StudentLocation"
         static let StudentLocationUserIdPut = "/classes/StudentLocation/{UserID}" //  ObjectId = UserID
         
@@ -48,6 +48,7 @@ extension UdacityClient { // Instead of storing them under UdacityClient, I just
         static let Session = "/session"
         static let Users = "/users"
         static let PublicData = "/users/{id}"
+        
     }
     
     // MARK: URL Keys - that will be pass in a URL link
@@ -71,8 +72,6 @@ extension UdacityClient { // Instead of storing them under UdacityClient, I just
         // get a student location
         static let Where = "where"
         
-        
-        
     }
     
     // MARK: Parameter Keys - key:value for query...
@@ -83,7 +82,11 @@ extension UdacityClient { // Instead of storing them under UdacityClient, I just
         static let Skip = "400"
         static let Order = "-updatedAt"
        
-        
+
+        // get a student location
+        // check what to put - userid or id ???
+        static let Where = "%7B%22uniqueKey%22%3A%22{userID}%22%7D"
+        // "https://parse.udacity.com/parse/classes/StudentLocation?where=%7B%22uniqueKey%22%3A%225555%22%7D"
     }
     
     // MARK: JSON Body Keys

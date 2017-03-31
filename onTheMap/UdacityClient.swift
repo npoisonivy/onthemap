@@ -19,7 +19,7 @@ class UdacityClient: NSObject { // save loginUser properties here!!
     
     // authentication state
     var sessionID: String? = nil
-    var userID: String? = "3903878747" // nil // = uniqueKey  - hard code for testing
+    var userID: String? = nil // = uniqueKey  - hard code for testing
     
     // from logged in user - must put "nil" or else, error: Instance member '' cannot be used on type 'udacityClass'
     var username: String? = nil
@@ -52,7 +52,9 @@ class UdacityClient: NSObject { // save loginUser properties here!!
 //        parametersWithApiKey[ParameterKeys.ApiKey] = Constants.ApiKey as AnyObject? - we don;t need api key
         
         /* 2/3. Build the URL, Configure the request */
-        
+        print("parameter is \(parameters)")
+        print("method is \(method)")
+        print("before studentURLFromParameters")
         let request = NSMutableURLRequest(url: studentURLFromParameters(parameters, withPathExtension: method)) // return a nice url with complete stuff : "https://parse.udacity.com/parse/classes/StudentLocation?limit=100&skip=400&order=-updatedAt"
         // "method" is the part that is outside of base url - like "classes/StudentLocation"
         request.addValue("QrX47CA9cyuGewLdsL7o5Eb8iug6Em8ye0dnAbIr", forHTTPHeaderField: "X-Parse-Application-Id")
@@ -91,7 +93,8 @@ class UdacityClient: NSObject { // save loginUser properties here!!
             }
             
             /* 5/6. Parse the data and use the data (happens in completion handler) */
-            self.convertDataWithCompletionHandler(data, completionHandlerForConvertData: completionHandlerForGET)
+            self.convertDataWithCompletionHandler(data, completionHandlerForConvertData: completionHandlerForGET) // parsedData returned to completionHandlerForConvertData: completionHandlerForGET -> parsedData, error passed to "completionHandlerForGet -> then it returned back to where taskForGetMethod is called!
+            
             // process:
             /* 1. @ func convertDataWithCompletionHandler ->   private func convertDataWithCompletionHandler(_ data: Data, completionHandlerForConvertData: (_ result: AnyObject?, _ error: NSError?) -> Void) { ->  we got "parseddata" from data after JSONSerialization
                2. @ completionHandlerForConvertData(parsedResult, nil) -> pass parsedResult to wherever calling func convertDataWithCompletionHandler RIGHT NOW -> which is right here @ UdacityClient "self.convertDataWithCompletionHandler(data, completionHandlerForConvertData: completionHandlerForGET)"
@@ -170,8 +173,12 @@ class UdacityClient: NSObject { // save loginUser properties here!!
     // substitute the key for the value that is contained within the method name
     func substituteKeyInMethod(_ method: String, key: String, value: String) -> String? {
         if method.range(of: "{\(key)}") != nil {
-            print("mutableMethod after transformation of substituteKey is .. \(method)")
+            print("mutableMethod before transformation of substituteKey is .. \(method)")
+            
+            print("mutableMethod after transformation of substituteKey is .. \(method.replacingOccurrences(of: "{\(key)}", with: value))")
+            
             return method.replacingOccurrences(of: "{\(key)}", with: value)
+            
         } else {
             return nil
         }
@@ -231,13 +238,17 @@ class UdacityClient: NSObject { // save loginUser properties here!!
             
         }
         components.queryItems = [URLQueryItem]()
-        
+        print("after components.queryItems is \(components)")
         for (key, value) in parameters {
             let queryItem = URLQueryItem(name: key, value: "\(value)")
+            print("queryItem inside for (key,value) is \(queryItem)")
             components.queryItems!.append(queryItem)
+            print("queryItemS inside for (key,value) is \(components.queryItems)")
         }
+        print("after key/ value in parameter processing...")
         print("url is... \(components.url)")
         return components.url!
+        
     }
 
     

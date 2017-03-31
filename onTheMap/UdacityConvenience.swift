@@ -343,24 +343,65 @@ extension UdacityClient {
     
     func submitStudentLoc() {
         // call get a student location
-        let state = getaStudentloc(){(state)} as Bool
-        if state { // true - have record already
-            // call PUT request
-        } else {  // false - no record before
-            // call POST request
+        getaStudentloc() { (state, error) in
+            if state == "PUT" { // true - have record already
+                // call PUT request
+                print("state is \(state)")
+            } else if state == "POST" {  // false - no record before
+                // call POST request
+                print("state is \(state)")
+            }
         }
-        
     }
     
-    func getaStudentloc(_ completionHandlerForGETaStudentLoc: @escaping (_ state: Bool, _ errorString: String?) -> Void ) {
-        // need unqiue key!
-        let uniqueKey = UdacityClient.sharedInstance().userID  // var userID: String? = "3903878747"
+    func getaStudentloc(_ completionHandlerForGETaStudentLoc: @escaping (_ state: String?, _ errorString: String?) -> Void ) {
+       
+        // expect url - "https://parse.udacity.com/parse/classes/StudentLocation?where=%7B%22uniqueKey%22%3A%225555%22%7D"  //uniqueKey = 5555
         
+        UdacityClient.sharedInstance().userID = "1234"
+        let uniquekey = UdacityClient.sharedInstance().userID!
+        
+        var parameters = [String: AnyObject!]()
+        parameters["where"] = "{\"uniqueKey\":\"\(uniquekey)\"}" as AnyObject??
+        // because taskForGETMethod's expected parameters datatype - [String : AnyObject]
+        
+        print("uniqueKey is ... \(uniquekey)")
+        
+        print("get a student loc 's parameters is \(parameters)") // result:  ["where": %7B%22uniqueKey%22%3A%223903878747%22%7D] -> value is AnyOject because it's what taskForGetMethod's expecting! Not String! so it's fine
+        
+        let method = Methods.StudentLocation   // "/classes/StudentLocation"
+        
+        self.baseURL = "parse"
+        
+        let _ = taskForGETMethod(method, parameters: parameters as [String : AnyObject]) { (resultback, error) in
+            // completionHandlerForGET will come back here - then i will use parsedResult (type: AnyObject), error here @ completionHandlerForGETaStudentLoc (this func!)
+            // parsedData
+            if let error = error {
+                completionHandlerForGETaStudentLoc(nil, "Can't retrieve any record of this login user!")
+            } else {
+                print("result of this user is \(resultback)")
+                
+                // resultback -> its datatype from taskForGETMethod is -> "_ result: AnyObject?" ->  {    results:[{ : }, {:}]     } -> To retrieve key [results] - need to 1. convert AnyObject to Dict -> 2. get call Dict[results] -> to see its count!
+                
+                if let convertedResults = resultback as? Dictionary<String, AnyObject> {
+                    print("convertedResults is .. \(convertedResults)")
+                    
+                    if let loggedInStudentLoc = convertedResults["results"] {
+                        print("count is \(loggedInStudentLoc.count)")
+                        let count = loggedInStudentLoc.count as Int
+                        
+                        if count > 1 {
+                            completionHandlerForGETaStudentLoc("PUT", nil)
+                        } else { // no previous
+                            completionHandlerForGETaStudentLoc("POST", nil)
+                        }
+                        
+                    } // end of if let loggedInStudentLoc
+                } // end of if let convertedResults
+            } // end of else
+        } // end of let _ = taskForGETMethod
         // return count back to submitStudentLoc
-    }
-    
-    
-    
+    }  // end of func getaStudentloc
 }  // end of class
 
 
