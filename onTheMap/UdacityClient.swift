@@ -37,6 +37,7 @@ class UdacityClient: NSObject { // save loginUser properties here!!
     var longitude: Double? = nil
     
     var mediaURL: String? = nil
+    var location: String? = nil
     
     // MARK: Initializers
     

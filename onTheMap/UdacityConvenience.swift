@@ -319,7 +319,7 @@ extension UdacityClient {
     
     // For Mapview @ MediaURL Posting StackView
     // when user clicks "Find on Map", after running func forwardGeocoding, run this.
-    func placeAnnotation() -> [MKPointAnnotation] {
+    func placeAnnotation() -> ([MKPointAnnotation], CLLocationCoordinate2D) {
         
         var annotationList = [MKPointAnnotation]() // need to create an array because to add annotation, need to use "addAnnotations" - that expects ARRAY
         
@@ -333,11 +333,10 @@ extension UdacityClient {
         let annotation = MKPointAnnotation()
         annotation.coordinate = coordinate
         
-        
         // append annotation (= 1 set) to annotationList
         annotationList.append(annotation)    // able to add pin on map - BUT didn't zoom in..
         
-        return annotationList   // pass back to View of MSB, so u can update mapView
+        return (annotationList, coordinate)   // pass back to View of MSB, so u can update mapView
         
     } // end of func placeAnnotation
     

@@ -37,30 +37,39 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate {
         
     } // end of viewDidLoad()
  
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+    }
+    
     
     @IBAction func submitMediaURL(_ sender: Any) {
         if (mediaURL.text?.isEmpty)! {
             mediaDebug.text = "Media URL cannot be blank"
             return
         } else {
-            UdacityClient.sharedInstance().mediaURL = mediaURL.text
+            // check if mediaURL is valid first ...
+            let mediaURL = self.mediaURL.text!.removingPercentEncoding!.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
             
-            // call several calls @ below submitStudentLoc()
-            // 1. get a student location
-            // 2. if nil call 2. POST a student location
-            // 3. if != nil, 3. PUT a student location
-            // 4. reloaddata...
-            
-            // hard code userID (=unique key) for now..
-            UdacityClient.sharedInstance().submitStudentLoc() // will do all of above
-
-        }
+            if let checkedMediaURL = NSURL(string: mediaURL) {
+                print("printing mediaURL")
+                print(self.mediaURL.text!)
+                print(mediaURL)
+                print(checkedMediaURL)
+                
+//                UdacityClient.sharedInstance().mediaURL = mediaURL.text
+                
+                // call several calls @ below submitStudentLoc()
+                // 1. get a student location
+                // 2. if nil call 2. POST a student location
+                // 3. if != nil, 3. PUT a student location
+                // 4. reloaddata...
+                
+                // hard code userID (=unique key) for now..
+                UdacityClient.sharedInstance().submitStudentLoc() // will do all of above
+                
+            } // end of "if let checkedMediaURL"
+        } // end of else
     } // end of @IBAction func submitMediaURL
-    
-    
-
-    
-    
     
     
     @IBAction func cancelBtnPressed(_ sender: AnyObject) {
@@ -76,6 +85,8 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate {
         } else { // have something...
             let location = locationInput.text! as String
             // do i need to store location to sharedInstance().location/?
+            UdacityClient.sharedInstance().location = location
+            
             print("location is \(location)")
             
             // Google :
@@ -102,24 +113,25 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate {
                     print("check if firstname is replace by calling func geocoding \( UdacityClient.sharedInstance().firstName)")  // would not get replaced :) good!
                     
                     // set pin to annotation - on the mapView : show annotation!
-                    let annotationList = UdacityClient.sharedInstance().placeAnnotation()
+                    let (annotationList, coordinate) = UdacityClient.sharedInstance().placeAnnotation()
+               
+                    // make map zoom to pin
+                    let span = MKCoordinateSpanMake(0.5, 0.5)
+                    let region = MKCoordinateRegion(center: coordinate, span: span)
+                    
+                    self.mapView.setRegion(region, animated: true)
+                    
+                    // add annotation to map
                     self.mapView.addAnnotations(annotationList)
                     
                     print(UdacityClient.sharedInstance().latitude) // it should not == nil - otherwise, means delete previous entry.
                     
-                    self.locationPostingStackView.isHidden = true
-                    self.mediaURLPostingStackView.isHidden = false
-//                    self.locationPostingStackView.animate
-//                    [UIView trans]
-                    
-                    
-//                    UIView.animate(withDuration: 0.5, delay: 0.3, options: [.repeat, .curveEaseOut, .autoreverse], animations: {
-//                        self.username.center.x += self.view.bounds.width
-//                    }, completion: nil)
-                    // UIView.animateWithDuration - to add fading effect
-                    
-                    
-                    
+                    // adding fading to hide/ show Views
+                    UIView.animate(withDuration: 3, delay: 0.5, options: UIViewAnimationOptions.curveEaseOut, animations: {
+                        // show/ hide
+                        self.locationPostingStackView.alpha = 0.0
+                        self.mediaURLPostingStackView.isHidden = false
+                    }, completion: nil)
                     
                 } // end of else - when is location string is valid
             } // end of { (placemarks, error)
