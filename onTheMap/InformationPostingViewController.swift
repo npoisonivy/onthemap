@@ -43,31 +43,37 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate {
     
     
     @IBAction func submitMediaURL(_ sender: Any) {
-        if (mediaURL.text?.isEmpty)! {
+        let link = mediaURL.text! as String
+        print("link is", link)
+        if (link.isEmpty) {
             mediaDebug.text = "Media URL cannot be blank"
             return
         } else {
-            // check if mediaURL is valid first ...
-            let mediaURL = self.mediaURL.text!.removingPercentEncoding!.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
+        // check if mediaURL is valid first ... - aborted as iOS9 requires to pre-register links app is going to list, limit - 50...
+            print("input mediaURL is ", link)
+            UdacityClient.sharedInstance().mediaURL = link
             
-            if let checkedMediaURL = NSURL(string: mediaURL) {
-                print("printing mediaURL")
-                print(self.mediaURL.text!)
-                print(mediaURL)
-                print(checkedMediaURL)
-                
-//                UdacityClient.sharedInstance().mediaURL = mediaURL.text
-                
-                // call several calls @ below submitStudentLoc()
-                // 1. get a student location
-                // 2. if nil call 2. POST a student location
-                // 3. if != nil, 3. PUT a student location
-                // 4. reloaddata...
-                
-                // hard code userID (=unique key) for now..
-                UdacityClient.sharedInstance().submitStudentLoc() // will do all of above
-                
-            } // end of "if let checkedMediaURL"
+            // call several calls @ below submitStudentLoc()
+            // 1. get a student location
+            // 2. if nil call 2. POST a student location
+            // 3. if != nil, 3. PUT a student location
+            // 4. reloaddata...
+            
+            // hard code userID (=unique key) for now..
+            UdacityClient.sharedInstance().submitStudentLoc() // will do all of above
+
+            
+//            if let checkedMediaURL = URL(string: link) {
+//                let app = UIApplication.shared
+//                let canOpen =  app.canOpenURL(checkedMediaURL)
+//                if canOpen {
+//                    print("mediaURL can be opened", canOpen )  // www.ibifu.com can't be opened
+//                } else {
+//                    print("mediaURL cannot be opened", canOpen )  // www.udacity.com can't be opened
+//                }
+////                result - canOpen - always FALSE as we didn't pre-register it!
+            
+//            } // end of "if let checkedMediaURL"
         } // end of else
     } // end of @IBAction func submitMediaURL
     
