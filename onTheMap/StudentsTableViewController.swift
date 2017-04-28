@@ -14,10 +14,8 @@ class StudentsTableViewController: UITableViewController {
     
     var locations: [StudentLocation] = [StudentLocation]() // prepare its type as struct -> prepares it to received the value from "getStudentLocations(C.H. returns: studentlocation, error) from tabbedVC.swift"
     
-    
     @IBOutlet weak var studentsLocationsTableView: UITableView!  // for calling reload data later
 
-    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -45,11 +43,13 @@ class StudentsTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
+        print("@ tableVC, locations passed is \(self.locations)")
         return self.locations.count
     }
 
     // to display data of each user - from self.locations on this page.
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        print("locations got passed \(locations)")
         let cell = tableView.dequeueReusableCell(withIdentifier: "LabelCell", for: indexPath)
         let student = locations[(indexPath as NSIndexPath).row] // that serve "for loop" to loop thr 100 locations
         

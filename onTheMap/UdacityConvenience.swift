@@ -166,7 +166,7 @@ extension UdacityClient {
        // print(UdacityClient.sharedInstance().userID) // Optional("3903878747") hard coded @ UdacityClient.swift
         
         mutableMethod = substituteKeyInMethod(mutableMethod, key: URLKeys.UserID , value: UdacityClient.sharedInstance().userID!)!
-        print("mutableMethod after transformation of substituteKey is .. \(mutableMethod)")
+        
        // mutableMethod = substituteKeyInMethod(mutableMethod, key: URLKeys.UserID, value: UdacityClient.sharedInstance().userID!)!  // right now hard code it as "3903878747" at UdacityClient.swift
         
         /* {
@@ -221,7 +221,7 @@ extension UdacityClient {
         /* 1. Specify parameters, method (if has {key}), and HTTP body (if POST) */
         var parameters = [String: AnyObject]()
         parameters[ParameterKeys.Limit] = ParameterValues.Limit as AnyObject?  // ex: limit=100
-        parameters[ParameterKeys.Skip] = ParameterValues.Skip as AnyObject?
+//        parameters[ParameterKeys.Skip] = ParameterValues.Skip as AnyObject?
         parameters[ParameterKeys.Order] = ParameterValues.Order as AnyObject?
         
 //         print("parameters is ... from getstudentslocations \(parameters)")
@@ -249,6 +249,7 @@ extension UdacityClient {
                     
                     // transform my result to a dictionary with more structed studentlocation preset by struct [StudentLocation] & StudentsLocationsFromResults @ UdacityStudentLocation - now open another UdacityStudentLocation.swift to build func StudentsLocationsFromResults
                     let studentlocations = StudentLocation.StudentsLocationsFromResults(results)
+                    // studentlocations is - [(),(),()] - [(firstName: "Michael", lastName: "Stram", ..), (firstName: "Michael", lastName: "Stram", latitude: 41.883229, longitude: 0.0, mapString: "Chica)]
 //                    print("inside getstudentslocations \(studentlocations)")
 //                    print("count is \(studentlocations.count)") // 100 - right!
                     completionHandlerForGetStudentLocations(studentlocations, nil)
@@ -340,24 +341,164 @@ extension UdacityClient {
         
     } // end of func placeAnnotation
     
+    
     func submitStudentLoc() {
         // call get a student location
-        getaStudentloc() { (state, error) in
-            if state == "PUT" { // true - have record already
-                // call PUT request
+        getaStudentloc() { (state, error) in   // state will be either
+            if let error = error {   // if error != nil
+                print(error)  // "Can't retrieve any record of this login user!
+            } else {  // has to be either PUT / POST
                 print("state is \(state)")
-            } else if state == "POST" {  // false - no record before
-                // call POST request
-                print("state is \(state)")
-            }
-        }
-    }
+                if state == "PUT" { // true - have record already
+                    // call PUT request
+                    self.putAStudentLoc(){(success, error) in
+                        // handles success, error
+                        if let error = error {
+                            print(error)
+                        } else { // success
+                            print("A new record has replaced the old one")
+                        } // end of if/else block
+                    } // end of self.putAStudentLoc()
+                    
+                    // Add alertViewcontroller to display "overwrite?" - but seems to do it
+                    
+                } else if state == "POST" {  // false - no record before
+                    // call POST a student location request
+                    self.postAStudentLoc(){(success, objectID, error) in   // elements passed from completionHandlerForPostAStudentLoc
+                        // done with POST request ALREADY - so now, let's deal with success, objectID, error here
+                        if let error = error {  // error != nil
+                            print(error)
+                        }
+                        if let objectID = objectID { // no error, only success!
+                            print("POST a student location request is successfuly, object id is", objectID)
+                        }
+                    } // end of self.postAStudentLoc()
+                }  /* end of else if state == "POST" */
+            } // end of else {state comparison} inside "getaStudentloc()"
+        }  // end of getaStudentloc()
+    } // end of func submitStudentLoc()
+    
+    // MARK : postAStudentLoc()
+    func postAStudentLoc(_ completionHandlerForPostAStudentLoc: @escaping (_ success: Bool, _ objectID: String?, _ errorString: String?) -> Void) {  // need completion handler - to see if successul or not.. object or..
+        // 1. prepare para, baseURL, method, jsonBody (if post)
+        // parameters - nothing
+        let parameters = [String:AnyObject]()
+        
+        // baseURL
+        self.baseURL = "parse"  // takes care of https://parse.udacity.com/parse
+        
+        //method
+        // I want - "https://parse.udacity.com/parse/classes/StudentLocation"
+        let method: String = Methods.StudentLocation  // /classes/StudentLocation
+        
+        // jsonbody - copy the parts from playground to here
+        let firstname = UdacityClient.sharedInstance().firstName
+        let lastname = UdacityClient.sharedInstance().lastName
+        let uniqueKey = UdacityClient.sharedInstance().userID
+        let mapString = UdacityClient.sharedInstance().location
+        let mediaURL = UdacityClient.sharedInstance().mediaURL
+        let latitude = UdacityClient.sharedInstance().latitude
+        let longitude = UdacityClient.sharedInstance().longitude
+        
+        let jsonBody = "{\"uniqueKey\": \"\(uniqueKey)\", \"firstName\": \"\(firstname)\", \"lastName\": \"\(lastname)\",\"mapString\": \"\(mapString)\", \"mediaURL\": \"\(mediaURL)\",\"latitude\": \(latitude), \"longitude\": \(longitude)}"
+            // delete .data(using: String.Encoding.utf8) here , as func taskForPOSTMethod will add that to the body!
+        
+        // 2. make the request
+        // call let _ = taskForPOSTMethod - where handles POST method, addValye, httpbody ... and call .dataTask for http request
+        let _ = taskForPOSTMethod(method, parameters: parameters, jsonBody: jsonBody) { (results, error) in
+            
+            print("POST Session's result of func postAStudentLoc ...\(results)") // result return from HTTP POST request's completion handler
+            
+            // 3. Send the desired value(s) to completion handler
+            // response will be :
+            // if success -
+            // {"objectId":"oVitymDNEi","createdAt":"2017-04-22T00:59:02.187Z"} - this can be "result"
+            // if fail -
+            // {"code":111,"error":"schema mismatch for StudentLocation.longitude; expected Number but got String"}
+
+            if let error = error {
+                completionHandlerForPostAStudentLoc(false, nil, "Post a Student Location request failed" )
+            } else {  // no error
+//                success: Bool, _ objectID: String?, _ errorString:
+                // grab the objectID out
+                if let objectID = results?["objectId"] as? String {
+                    completionHandlerForPostAStudentLoc(true, objectID as! String, nil)
+                } else {
+                    print("Could not parse ObjectID in \(results)")
+                    completionHandlerForPostAStudentLoc(false, nil, "There is no Object ID returned! (when posting a student location")
+                } // end of else inside else
+            } // end of else inside let _ =
+        } // end of let _ =
+    } // end of func postAStudentLoc
+    
+    // MARK : putAStudentLoc()
+    func putAStudentLoc(_ completionHandlerForPUTAStudentLoc: @escaping (_ success: Bool, _ errorString: String?) -> Void) {  // need completion handler - to see if successul or not.. object or..
+        
+        // Sample link - "https://api.parse.com/1/classes/StudentLocation/8ZExGR5uX8"
+        
+        // 1. prepare para, baseURL, method, jsonBody (if post)
+        // parameters - nothing
+        let parameters = [String:AnyObject]()
+        
+        // baseURL
+        self.baseURL = "parse"  // takes care of https://parse.udacity.com/parse
+        
+        //method
+        // I want - "https://parse.udacity.com/parse/classes/StudentLocation"
+        var mutableMethod: String = Methods.StudentLocationObjectIdPut  // "/classes/StudentLocation/{ObjectID}"
+        
+        UdacityClient.sharedInstance().objectID = "zrYUd9LFtb"
+//        UdacityClient.sharedInstance().objectID = "hhh"
+        
+        // call substituteKeyInMethod(_ method: String, key: String, value: String) -> String? {
+        mutableMethod = substituteKeyInMethod(mutableMethod, key: URLKeys.ObjectID, value: UdacityClient.sharedInstance().objectID!)!
+        print("mutableMethod is ", mutableMethod)
+        
+        UdacityClient.sharedInstance().lastName = "Way" // temp - as lastname was "nil" -> cause statuscode != 2xx when putting request made
+        // jsonbody - copy the parts from playground to here
+        let firstname = UdacityClient.sharedInstance().firstName!
+        let lastname = UdacityClient.sharedInstance().lastName! // add "!" to avoid optional input to the PUT request - if not, it will be
+        let uniqueKey = UdacityClient.sharedInstance().userID!
+        let mapString = UdacityClient.sharedInstance().location!
+        let mediaURL = UdacityClient.sharedInstance().mediaURL!
+        let latitude = UdacityClient.sharedInstance().latitude!
+        let longitude = UdacityClient.sharedInstance().longitude!
+        
+        let jsonBody = "{\"uniqueKey\": \"\(uniqueKey)\", \"firstName\": \"\(firstname)\", \"lastName\": \"\(lastname)\",\"mapString\": \"\(mapString)\", \"mediaURL\": \"\(mediaURL)\",\"latitude\": \(latitude), \"longitude\": \(longitude)}"
+        // delete .data(using: String.Encoding.utf8) here , as func taskForPOSTMethod will add that to the body!
+        
+        // 2. make the request
+        // call let _ = taskForPOSTMethod - where handles POST method, addValye, httpbody ... and call .dataTask for http request
+        let _ = taskForPUTMethod(mutableMethod, parameters: parameters, jsonBody: jsonBody) { (results, error) in
+            
+            print("PUT Session's result of func putAStudentLoc ...\(results)") // result return from HTTP POST request's completion handler
+            
+            // 3. Send the desired value(s) to completion handler
+            // response will be :
+            // if success -
+            // {"updatedAt":"2015-03-11T02:56:49.997Z"} - this can be "result"
+            // if fail -
+            // {"code":101,"error":"Object not found."} - checked at playground and see what will be the result
+            
+            // when statusCode is 404 - it will still send result - result wont come here but under "dataTask"
+            // need to reconstruct below according to what result to return from the PUT request
+            if let error = error {  // this error (occurs when sending out request, amd a faieled request will have this error) is != as error from server
+                completionHandlerForPUTAStudentLoc(false, "Put a Student Location request failed" )
+            } else {  // no error
+                //  success: Bool, _ errorString: - result: {"updatedAt":"2017-04-25T05:58:44.619Z"}
+                completionHandlerForPUTAStudentLoc(true, nil)
+            } // end of else inside let _ =
+        } // end of let _ =
+    } // end of func postAStudentLoc
     
     func getaStudentloc(_ completionHandlerForGETaStudentLoc: @escaping (_ state: String?, _ errorString: String?) -> Void ) {
        
         // expect url - "https://parse.udacity.com/parse/classes/StudentLocation?where=%7B%22uniqueKey%22%3A%225555%22%7D"  //uniqueKey = 5555
         
-        UdacityClient.sharedInstance().userID = "1234"
+        UdacityClient.sharedInstance().userID = "1234" // PUT
+//        UdacityClient.sharedInstance().userID = "22"  // POST - no record before - error: {"error":"Unexpected number"}
+//        UdacityClient.sharedInstance().userID = "555" // POST
+        
         let uniquekey = UdacityClient.sharedInstance().userID!
         
         var parameters = [String: AnyObject!]()
@@ -375,27 +516,36 @@ extension UdacityClient {
         let _ = taskForGETMethod(method, parameters: parameters as [String : AnyObject]) { (resultback, error) in
             // completionHandlerForGET will come back here - then i will use parsedResult (type: AnyObject), error here @ completionHandlerForGETaStudentLoc (this func!)
             // parsedData
-            if let error = error {
+            if let error = error {  // means if error != nil
                 completionHandlerForGETaStudentLoc(nil, "Can't retrieve any record of this login user!")
             } else {
                 print("result of this user is \(resultback)")
-                
                 // resultback -> its datatype from taskForGETMethod is -> "_ result: AnyObject?" ->  {    results:[{ : }, {:}]     } -> To retrieve key [results] - need to 1. convert AnyObject to Dict -> 2. get call Dict[results] -> to see its count!
                 
                 if let convertedResults = resultback as? Dictionary<String, AnyObject> {
                     print("convertedResults is .. \(convertedResults)")
-                    
-                    if let loggedInStudentLoc = convertedResults["results"] {
+//                    var emptyArray: [Int] = []
+                    if let loggedInStudentLoc = convertedResults["results"] as? [AnyObject] { //to array
                         print("count is \(loggedInStudentLoc.count)")
                         let count = loggedInStudentLoc.count as Int
                         
-                        if count > 1 {
-                            completionHandlerForGETaStudentLoc("PUT", nil)
-                        } else { // no previous
+                        if count > 0 {
+                            // grab the objectID out
+                            print(loggedInStudentLoc[0])
+                            if let objectID = loggedInStudentLoc[0]["objectId"] as? String {
+                                UdacityClient.sharedInstance().objectID = objectID // save it
+                                completionHandlerForGETaStudentLoc("PUT", nil)
+                            } else {
+                                print("Could not parse ObjectID in \(loggedInStudentLoc[-1])")
+                                completionHandlerForGETaStudentLoc(nil, "There is no objectID captured")
+                            } // end of else inside else
+                        } else { // no previous record
                             completionHandlerForGETaStudentLoc("POST", nil)
-                        }
-                        
-                    } // end of if let loggedInStudentLoc
+                        } // end of if/else
+                    } /* end of if let loggedInStudentLoc */ else {
+                        // if there is error parsing result
+                        completionHandlerForGETaStudentLoc(nil, "Cannot parse result's length")
+                    } // end of else of
                 } // end of if let convertedResults
             } // end of else
         } // end of let _ = taskForGETMethod

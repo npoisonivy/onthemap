@@ -30,7 +30,12 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate {
         super.viewDidLoad()
         
         debugArea.text = ""
+        
         mediaDebug.text = ""
+        // then I don't need to keep "uninstall" The location view, to work on media view
+        mediaDebug.lineBreakMode = NSLineBreakMode.byWordWrapping
+        mediaDebug.numberOfLines = 4
+        
         locationPostingStackView.isHidden = false
         mediaURLPostingStackView.isHidden = true
         UdacityClient.sharedInstance().firstName = "testing111"
@@ -41,17 +46,23 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate {
         super.viewDidAppear(animated)
     }
     
-    
     @IBAction func submitMediaURL(_ sender: Any) {
         let link = mediaURL.text! as String
         print("link is", link)
         if (link.isEmpty) {
             mediaDebug.text = "Media URL cannot be blank"
             return
+        } else if !(link.hasPrefix("http://")) {
+            mediaDebug.text = "Please add prefix - 'http://'"
+            return
         } else {
         // check if mediaURL is valid first ... - aborted as iOS9 requires to pre-register links app is going to list, limit - 50...
             print("input mediaURL is ", link)
             UdacityClient.sharedInstance().mediaURL = link
+            
+            // hard code userID (=unique key) for now..
+            UdacityClient.sharedInstance().submitStudentLoc() // will do all of below
+            self.dismiss(animated: true, completion: nil) // go back to mapVC/ StudentsTVC
             
             // call several calls @ below submitStudentLoc()
             // 1. get a student location
@@ -59,21 +70,17 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate {
             // 3. if != nil, 3. PUT a student location
             // 4. reloaddata...
             
-            // hard code userID (=unique key) for now..
-            UdacityClient.sharedInstance().submitStudentLoc() // will do all of above
-
-            
-//            if let checkedMediaURL = URL(string: link) {
-//                let app = UIApplication.shared
-//                let canOpen =  app.canOpenURL(checkedMediaURL)
-//                if canOpen {
-//                    print("mediaURL can be opened", canOpen )  // www.ibifu.com can't be opened
-//                } else {
-//                    print("mediaURL cannot be opened", canOpen )  // www.udacity.com can't be opened
-//                }
-////                result - canOpen - always FALSE as we didn't pre-register it!
-            
-//            } // end of "if let checkedMediaURL"
+            /* below to check if an URL is valid beforehand but iOS8 requires to preregister all URL, so I am not applying this block to my project
+              if let checkedMediaURL = URL(string: link) {
+                  let app = UIApplication.shared
+                  let canOpen =  app.canOpenURL(checkedMediaURL)
+                  if canOpen {
+                      print("mediaURL can be opened", canOpen )  // www.ibifu.com can't be opened
+                  } else {
+                      print("mediaURL cannot be opened", canOpen )  // www.udacity.com can't be opened
+                  }
+                    result - canOpen - always FALSE as we didn't pre-register it!          
+              } // end of "if let checkedMediaURL"  */
         } // end of else
     } // end of @IBAction func submitMediaURL
     
@@ -120,9 +127,9 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate {
                     
                     // set pin to annotation - on the mapView : show annotation!
                     let (annotationList, coordinate) = UdacityClient.sharedInstance().placeAnnotation()
-               
+                    print("annotationList and coordinate returned from .placeAnnotation() is \(annotationList) \(coordinate)")
                     // make map zoom to pin
-                    let span = MKCoordinateSpanMake(0.5, 0.5)
+                    let span = MKCoordinateSpanMake(0.5, 0.5) // original: 0.5
                     let region = MKCoordinateRegion(center: coordinate, span: span)
                     
                     self.mapView.setRegion(region, animated: true)
@@ -143,13 +150,6 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate {
             } // end of { (placemarks, error)
         } // end of else block
     } // end of  @IBAction func findOnMapBtnPressed
-    
-    
-    
-    
-    
-    
-
 } // end of class
 
 

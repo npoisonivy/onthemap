@@ -24,6 +24,7 @@ class UdacityClient: NSObject { // save loginUser properties here!!
     // from logged in user - must put "nil" or else, error: Instance member '' cannot be used on type 'udacityClass'
     var username: String? = nil
     var password: String? = nil
+    var objectID: String? = nil
     
     // from calling GET public data
     var firstName: String? = nil 
@@ -114,7 +115,6 @@ class UdacityClient: NSObject { // save loginUser properties here!!
     }
 
     // MARK: POST
-    
     func taskForPOSTMethod(_ method: String, parameters: [String:AnyObject], jsonBody: String, completionHandlerForPOST: @escaping (_ result: AnyObject?, _ error: NSError?) -> Void) -> URLSessionDataTask {
         
         /* 1. Set the parameters - we don't need this as no need to add apiKey for this project*/
@@ -129,6 +129,72 @@ class UdacityClient: NSObject { // save loginUser properties here!!
         request.addValue("QrX47CA9cyuGewLdsL7o5Eb8iug6Em8ye0dnAbIr", forHTTPHeaderField: "X-Parse-Application-Id")
         request.addValue("QuWThTdiRmTux3YaDseUSEpUKo7aBYM737yKd4gY", forHTTPHeaderField: "X-Parse-REST-API-Key")
         request.httpBody = jsonBody.data(using: String.Encoding.utf8)   // taskForPOSTMethod expects input "jsonBody"
+        
+        print("jsonBody is below")
+        print(NSString(data: request.httpBody!, encoding: String.Encoding.utf8.rawValue)!)
+        
+        print("request is... \(request)")
+        /* 4. Make the request */
+        let task = session.dataTask(with: request as URLRequest) { (data, response, error) in
+            
+            func sendError(_ error: String) {
+                print(error)
+                let userInfo = [NSLocalizedDescriptionKey : error]
+                completionHandlerForPOST(nil, NSError(domain: "taskForGETMethod", code: 1, userInfo: userInfo))
+            }
+            
+            /* GUARD: Was there an error? */
+            guard (error == nil) else {
+                print(error)
+                sendError("There was an error with your request: \(error)")
+                return
+            }
+            
+            /* GUARD: Was there any data returned? */
+            guard let data = data else {
+                sendError("No data was returned by the request!")
+                return
+            }
+            // after passing "guard let data = data" - means data != nil now
+            print(NSString(data: data, encoding: String.Encoding.utf8.rawValue)!)
+            print("data is", data) // data is .... 40 bytes
+            // {"error":"Unexpected number"} - when uniqueKey does not exist
+            
+            /* GUARD: Did we get a successful 2XX response? */
+            guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
+                sendError("Your request returned a status code other than 2xx!")
+                return
+            }
+            
+            print("data is....\(data)") // data is....270 bytes
+            /* 5/6. Parse the data and use the data (happens in completion handler) */
+            self.convertDataWithCompletionHandler(data, completionHandlerForConvertData: completionHandlerForPOST)
+        }
+        
+        /* 7. Start the request */
+        task.resume()
+        
+        return task
+    } // end of POST request
+    
+    // MARK: PUT
+    func taskForPUTMethod(_ method: String, parameters: [String:AnyObject], jsonBody: String, completionHandlerForPOST: @escaping (_ result: AnyObject?, _ error: NSError?) -> Void) -> URLSessionDataTask {
+        
+        /* 1. Set the parameters - we don't need this as no need to add apiKey for this project*/
+        //        var parametersWithApiKey = parameters
+        //        parametersWithApiKey[ParameterKeys.ApiKey] = Constants.ApiKey as AnyObject?
+        
+        /* 2/3. Build the URL, Configure the request */
+        let request = NSMutableURLRequest(url: studentURLFromParameters(parameters, withPathExtension: method))
+        request.httpMethod = "PUT"
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("QrX47CA9cyuGewLdsL7o5Eb8iug6Em8ye0dnAbIr", forHTTPHeaderField: "X-Parse-Application-Id")
+        request.addValue("QuWThTdiRmTux3YaDseUSEpUKo7aBYM737yKd4gY", forHTTPHeaderField: "X-Parse-REST-API-Key")
+        request.httpBody = jsonBody.data(using: String.Encoding.utf8)   // taskForPOSTMethod expects input "jsonBody"
+        
+        print("jsonBody is below")
+        print(NSString(data: request.httpBody!, encoding: String.Encoding.utf8.rawValue)!)
         
         print("request is... \(request)")
         /* 4. Make the request */
@@ -145,6 +211,15 @@ class UdacityClient: NSObject { // save loginUser properties here!!
                 sendError("There was an error with your request: \(error)")
                 return
             }
+
+            /* GUARD: Was there any data returned? */
+            guard let data = data else {
+                sendError("No data was returned by the request!")
+                return
+            }
+            // after passing "guard let data = data" - means data != nil now
+            print(NSString(data: data, encoding: String.Encoding.utf8.rawValue)!)
+            print("data is....\(data)") // data is....40 bytes
             
             /* GUARD: Did we get a successful 2XX response? */
             guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
@@ -152,13 +227,6 @@ class UdacityClient: NSObject { // save loginUser properties here!!
                 return
             }
             
-            /* GUARD: Was there any data returned? */
-            guard let data = data else {
-                sendError("No data was returned by the request!")
-                return
-            }
-            
-            print("data is....\(data)") // data is....270 bytes
             /* 5/6. Parse the data and use the data (happens in completion handler) */
             self.convertDataWithCompletionHandler(data, completionHandlerForConvertData: completionHandlerForPOST)
         }
@@ -167,12 +235,17 @@ class UdacityClient: NSObject { // save loginUser properties here!!
         task.resume()
         
         return task
-    }
+    } // end of PUT request
+
     
     // MARK: Helpers
     
     // substitute the key for the value that is contained within the method name
     func substituteKeyInMethod(_ method: String, key: String, value: String) -> String? {
+        print("mutableMethod before transformation of substituteKey is .. \(method)")
+        print(key)
+        print(value)
+        
         if method.range(of: "{\(key)}") != nil {
             print("mutableMethod before transformation of substituteKey is .. \(method)")
             

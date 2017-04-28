@@ -42,7 +42,7 @@ extension UdacityClient { // Instead of storing them under UdacityClient, I just
     struct Methods {
         // student location OR get A student location
         static let StudentLocation = "/classes/StudentLocation"
-        static let StudentLocationUserIdPut = "/classes/StudentLocation/{UserID}" //  ObjectId = UserID
+        static let StudentLocationObjectIdPut = "/classes/StudentLocation/{ObjectID}"
         
         // udacity - session
         static let Session = "/session"
@@ -55,7 +55,7 @@ extension UdacityClient { // Instead of storing them under UdacityClient, I just
     struct URLKeys {
         static let UniqueKey = "uniqueKey" // get a student location
         static let UserID = "id" // get public User Data
-        static let ObjectID = "objectid"  // put a student location
+        static let ObjectID = "ObjectID"  // put a student location
     }
     
     // MARK: Parameter Keys - key:value for query...
@@ -78,13 +78,13 @@ extension UdacityClient { // Instead of storing them under UdacityClient, I just
     struct ParameterValues {
         
         // get student locations
-        static let Limit = "100"
+        static let Limit = "3" // need to change it back to 100
         static let Skip = "400"
         static let Order = "-updatedAt"
        
-
         // get a student location
         // check what to put - userid or id ???
+        // do i need to replace this ??? because i already have a part to take care of this!
         static let Where = "%7B%22uniqueKey%22%3A%22{userID}%22%7D"
         // "https://parse.udacity.com/parse/classes/StudentLocation?where=%7B%22uniqueKey%22%3A%225555%22%7D"
     }

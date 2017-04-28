@@ -55,13 +55,18 @@ class TabbedViewController: UITabBarController {
                 self.locations = locations
                 print("self.location inside refreshbtn is... \(self.locations.count)") // #100 right!
                 performUIUpdatesOnMain {
+                    // pass locations , reloaddata @ tableviewcontroller
                     // reload data ... but i dont have access to the tablview / mapview...
                     let StudentTable = self.viewControllers?[1] as? StudentsTableViewController
                     StudentTable?.locations = self.locations  // must have this to pass locations to next VC
+                    print("StudentTable?.locations\(StudentTable?.locations)")
                     StudentTable?.tableView.reloadData() // how to access viewcontroller of type of another view controller
                     
-//                    let StudentMap = self.viewControllers?[0] as?
-                         
+                    // pass locations , reloaddata @ mapviewcontroller
+                    let StudentMap = self.viewControllers?[0] as? MapViewController
+                    StudentMap?.locations = self.locations
+                    print("StudentMap?.locations - \(StudentMap?.locations)")
+                    StudentMap?.mapView.reloadInputViews()  // is "reloadInputViews" correct for mapview?
                 }
             } else {
                 print(error)
@@ -82,9 +87,14 @@ class TabbedViewController: UITabBarController {
                 self.locations = locations   // many struct of [StudentLocation]
                 print("self.location count viewWillAppear is... \(self.locations.count)") // #100 right??
                 performUIUpdatesOnMain {
+                    // pass locations , reloaddata @ tableviewcontroller
                     let StudentTable = self.viewControllers?[1] as? StudentsTableViewController
                     StudentTable?.locations = self.locations // neccessary -> to pass locations to next VC
                     StudentTable?.tableView.reloadData()
+                    // pass locations , reloaddata @ mapviewcontroller
+                    let StudentMap = self.viewControllers?[0] as? MapViewController
+                    StudentMap?.locations = self.locations // neccessary -> to pass locations to next VC
+                    StudentMap?.mapView.reloadInputViews() // is "reloadInputViews" correct for mapview?
                 }
             } else {
                 print(error)

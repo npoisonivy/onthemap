@@ -1,4 +1,6 @@
 //: Playground - noun: a place where people can play
+// Original document, nothing got modified... - check out another file - onthemap_transition for more customized code with userid encoded into the urlstring like this
+// let urlString = "https://parse.udacity.com/parse/classes/StudentLocation?where=%7B%22uniqueKey%22%3A%221234%22%7D" 
 
 import UIKit
 import PlaygroundSupport
