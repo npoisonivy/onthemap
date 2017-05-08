@@ -26,7 +26,7 @@
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="GTx-32-VNT">
                                 <rect key="frame" x="16" y="55" width="343" height="594"/>
                                 <subviews>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="udacity" translatesAutoresizingMaskIntoConstraints="NO" id="WIa-5n-eAW">
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo-u" translatesAutoresizingMaskIntoConstraints="NO" id="WIa-5n-eAW">
                                         <rect key="frame" x="0.0" y="0.0" width="343" height="100"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="100" id="3sF-rS-Cdt"/>
@@ -137,12 +137,12 @@
                             </connections>
                         </barButtonItem>
                         <rightBarButtonItems>
-                            <barButtonItem systemItem="refresh" id="WUh-zg-Z4i">
+                            <barButtonItem image="icon_refresh" id="WUh-zg-Z4i">
                                 <connections>
                                     <action selector="refreshBtnPressed:" destination="jgd-5R-556" id="Cc0-0H-lMk"/>
                                 </connections>
                             </barButtonItem>
-                            <barButtonItem image="pin" id="PbH-7u-FEu" userLabel="Pin">
+                            <barButtonItem image="icon_pin-1" id="PbH-7u-FEu" userLabel="Pin">
                                 <connections>
                                     <segue destination="Dyq-eH-tsN" kind="presentation" id="QGW-iS-zvA"/>
                                 </connections>
@@ -244,7 +244,7 @@
                             <outlet property="delegate" destination="EQc-og-T3o" id="ENM-We-UAw"/>
                         </connections>
                     </tableView>
-                    <tabBarItem key="tabBarItem" title="List" image="list" id="E9J-6d-ejs"/>
+                    <tabBarItem key="tabBarItem" title="List" image="icon_listview-deselected" id="E9J-6d-ejs"/>
                     <navigationItem key="navigationItem" id="wJI-Kk-htL"/>
                     <connections>
                         <outlet property="studentsLocationsTableView" destination="qgp-8l-0WW" id="q9x-ex-si0"/>
@@ -280,7 +280,7 @@
                             <constraint firstItem="6a5-xr-xNo" firstAttribute="top" secondItem="oJt-to-uIQ" secondAttribute="top" id="oYq-aE-TOX"/>
                         </constraints>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Map" image="map" id="7o0-gl-YVg"/>
+                    <tabBarItem key="tabBarItem" title="Map" image="icon_mapview-deselected" id="7o0-gl-YVg"/>
                     <navigationItem key="navigationItem" id="QuN-4h-2ag"/>
                     <connections>
                         <outlet property="mapView" destination="6a5-xr-xNo" id="685-L4-CNw"/>
@@ -530,9 +530,11 @@
         </scene>
     </scenes>
     <resources>
-        <image name="list" width="32" height="32"/>
-        <image name="map" width="32" height="32"/>
+        <image name="icon_listview-deselected" width="75" height="50"/>
+        <image name="icon_mapview-deselected" width="75" height="50"/>
+        <image name="icon_pin-1" width="24" height="24"/>
+        <image name="icon_refresh" width="24" height="24"/>
+        <image name="logo-u" width="62" height="62"/>
         <image name="pin" width="32" height="32"/>
-        <image name="udacity" width="256" height="256"/>
     </resources>
 </document>

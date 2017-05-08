@@ -88,7 +88,7 @@ extension UdacityClient {
         let method: String = Methods.Session
         
         let jsonBody = "{\"udacity\": {\"username\": \"\(username)\", \"password\": \"\(password)\"}}"
-        print("***jsonBody is ..\(jsonBody)") // jsonBody is ..{"udacity": {"username": "spacenikki@gmail.com", "password": "baseball"}} -> not matching what we wanted...
+        print("***jsonBody is ..\(jsonBody)") // jsonBody is ..{"udacity": {"username": "xxxx@gmail.com", "password": "xxxxx"}} -> not matching what we wanted...
     
         /* Original @ playground:
         let request = NSMutableURLRequest(url: URL(string: "https://www.udacity.com/api/session")!)
@@ -421,9 +421,9 @@ extension UdacityClient {
         // I want - "https://parse.udacity.com/parse/classes/StudentLocation"
         let method: String = Methods.StudentLocation  // /classes/StudentLocation
         
-        UdacityClient.sharedInstance().userID = "179" // test for brand new POST call
-        UdacityClient.sharedInstance().firstName = "Jennifer"
-        UdacityClient.sharedInstance().lastName = "Aniston" // temp - as lastname was "nil"
+//        UdacityClient.sharedInstance().userID = "179" // test for brand new POST call
+//        UdacityClient.sharedInstance().firstName = "Jennifer"
+//        UdacityClient.sharedInstance().lastName = "Aniston" // temp - as lastname was "nil"
         
         /* jsonbody - copy the parts from playground to here - "!" if not added -
         cause error - "number not found */
@@ -482,14 +482,14 @@ extension UdacityClient {
         // I want - "https://parse.udacity.com/parse/classes/StudentLocation"
         var mutableMethod: String = Methods.StudentLocationObjectIdPut  // "/classes/StudentLocation/{ObjectID}"
         
-        UdacityClient.sharedInstance().objectID = "zrYUd9LFtb"
+        // UdacityClient.sharedInstance().objectID = "zrYUd9LFtb"
 //        UdacityClient.sharedInstance().objectID = "hhh"
         
         // call substituteKeyInMethod(_ method: String, key: String, value: String) -> String? {
         mutableMethod = substituteKeyInMethod(mutableMethod, key: URLKeys.ObjectID, value: UdacityClient.sharedInstance().objectID!)!
         print("mutableMethod is ", mutableMethod)
-        UdacityClient.sharedInstance().firstName = "Macro"
-        UdacityClient.sharedInstance().lastName = "Polo" // temp - as lastname was "nil" -> cause statuscode != 2xx when putting request made
+//        UdacityClient.sharedInstance().firstName = "Macro"
+//        UdacityClient.sharedInstance().lastName = "Polo" // temp - as lastname was "nil" -> cause statuscode != 2xx when putting request made
         
         // jsonbody - copy the parts from playground to here
         let firstname = UdacityClient.sharedInstance().firstName!
@@ -535,7 +535,7 @@ extension UdacityClient {
 //        UdacityClient.sharedInstance().userID = "22"  // POST - no record before - error: {"error":"Unexpected number"}
 //        UdacityClient.sharedInstance().userID = "555" // POST
         print("UdacityClient.sharedInstance().userID is ...", UdacityClient.sharedInstance().userID)
-        UdacityClient.sharedInstance().userID = "178"
+        // UdacityClient.sharedInstance().userID = "178"
         let uniquekey = UdacityClient.sharedInstance().userID
         
 //        let uniquekey = UdacityClient.sharedInstance().userID! - uncomment it after deleting above hard coded ones

@@ -18,7 +18,7 @@ PlaygroundPage.current.needsIndefiniteExecution = true
 //request.httpMethod = "POST"
 //request.addValue("application/json", forHTTPHeaderField: "Accept")
 //request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-//request.httpBody = "{\"udacity\": {\"username\": \"spacenikki@gmail.com\", \"password\": \"wifi=123\"}}".data(using: String.Encoding.utf8)
+//request.httpBody = "{\"udacity\": {\"username\": \"xxx@gmail.com\", \"password\": \"xxxx\"}}".data(using: String.Encoding.utf8)
 //
 //let session = URLSession.shared
 //let task = session.dataTask(with: request as URLRequest) { data, response, error in
@@ -144,13 +144,13 @@ task.resume()
 //request.httpMethod = "POST"
 //request.addValue("application/json", forHTTPHeaderField: "Accept")
 //request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-//let username = "spacenikki@gmail.com"
-//let password = "baseball"
-//// {"udacity": {"username": "spacenikki@gmail.com", "password": "baseball"}}
+//let username = "xxxx@gmail.com"
+//let password = "xxx"
+//// {"udacity": {"username": "xxx@gmail.com", "password": "xxx"}}
 //request.addValue("QrX47CA9cyuGewLdsL7o5Eb8iug6Em8ye0dnAbIr", forHTTPHeaderField: "X-Parse-Application-Id")
 //request.addValue("QuWThTdiRmTux3YaDseUSEpUKo7aBYM737yKd4gY", forHTTPHeaderField: "X-Parse-REST-API-Key")
 //request.httpBody = "{\"udacity\": {\"username\": \"\(username)\", \"password\": \"\(password)\"}}".data(using: String.Encoding.utf8)
-//// {"udacity": {"username": "spacenikki@gmail.com", "password": "baseball"}}
+//// {"udacity": {"username": "xxx@gmail.com", "password": "xxx"}}
 //print("httpbody is ...")
 //print(NSString(data: request.httpBody!, encoding: String.Encoding.utf8.rawValue)!)
 //
