@@ -5,17 +5,25 @@ This app enables users to drop pins for location display and pin annotations for
 
 # Features
 Login/ Registration
+
 View the most recently added 100 student locations on the map
+
 Add a user's location (with forward geocoding) and URL to server
+
 Logout
 
 # Implementation
 
 Synchronization
+
 Reading and writing from RESTful networked APIs
+
 Accessing networked data using Apple's URL loading framework
+
 Authenticating a user using over a network connection
+
 Creating user interfaces that are responsive, and communicate network activity
+
 Use Core Location and the MapKit framework to display annoted pins on a map
 
 # Screenshot:
