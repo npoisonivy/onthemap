@@ -19,5 +19,4 @@ Creating user interfaces that are responsive, and communicate network activity
 Use Core Location and the MapKit framework to display annoted pins on a map
 
 # Screenshot:
-![1](https://cloud.githubusercontent.com/assets/13814618/25154999/ced4aa3a-2447-11e7-90cc-9d4df9a04057.png)
-![image](https://cloud.githubusercontent.com/assets/13814618/25828491/456651b8-3405-11e7-9e61-2c73557fe329.png)
+![image](https://cloud.githubusercontent.com/assets/13814618/25828560/acb19a4e-3405-11e7-9cbd-988a13877cb7.png)
