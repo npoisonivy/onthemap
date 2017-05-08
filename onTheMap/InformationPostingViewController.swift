@@ -38,7 +38,7 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate {
         
         locationPostingStackView.isHidden = false
         mediaURLPostingStackView.isHidden = true
-        UdacityClient.sharedInstance().firstName = "testing111"
+//        UdacityClient.sharedInstance().firstName = "testing111"
         
     } // end of viewDidLoad()
  
@@ -52,8 +52,8 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate {
         if (link.isEmpty) {
             mediaDebug.text = "Media URL cannot be blank"
             return
-        } else if !(link.hasPrefix("http://")) {
-            mediaDebug.text = "Please add prefix - 'http://'"
+        } else if !(link.hasPrefix("http://") || link.hasPrefix("https://"))  {
+            mediaDebug.text = "Please add prefix - 'http:// or https://'"
             return
         } else {
         // check if mediaURL is valid first ... - aborted as iOS9 requires to pre-register links app is going to list, limit - 50...
@@ -140,7 +140,7 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate {
                     print(UdacityClient.sharedInstance().latitude) // it should not == nil - otherwise, means delete previous entry.
                     
                     // adding fading to hide/ show Views
-                    UIView.animate(withDuration: 3, delay: 0.5, options: UIViewAnimationOptions.curveEaseOut, animations: {
+                    UIView.animate(withDuration: 1, delay: 0.01, options: UIViewAnimationOptions.curveEaseOut, animations: {
                         // show/ hide
                         self.locationPostingStackView.alpha = 0.0
                         self.mediaURLPostingStackView.isHidden = false

@@ -156,9 +156,7 @@ class UdacityClient: NSObject { // save loginUser properties here!!
                 return
             }
             // after passing "guard let data = data" - means data != nil now
-            print(NSString(data: data, encoding: String.Encoding.utf8.rawValue)!)
-            print("data is", data) // data is .... 40 bytes
-            // {"error":"Unexpected number"} - when uniqueKey does not exist
+            print("guard let data -", NSString(data: data, encoding: String.Encoding.utf8.rawValue)!)
             
             /* GUARD: Did we get a successful 2XX response? */
             guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
@@ -218,7 +216,7 @@ class UdacityClient: NSObject { // save loginUser properties here!!
                 return
             }
             // after passing "guard let data = data" - means data != nil now
-            print(NSString(data: data, encoding: String.Encoding.utf8.rawValue)!)
+            print("data from HTTP PUT method is ", NSString(data: data, encoding: String.Encoding.utf8.rawValue)!)
             print("data is....\(data)") // data is....40 bytes
             
             /* GUARD: Did we get a successful 2XX response? */
@@ -261,41 +259,39 @@ class UdacityClient: NSObject { // save loginUser properties here!!
     // given raw JSON, return a usable Foundation object
     
     private func convertDataWithCompletionHandler(_ data: Data, completionHandlerForConvertData: (_ result: AnyObject?, _ error: NSError?) -> Void) {
-        // let newData = data.subdataWithRange(NSMakeRange(5, data.length - 5))
-        // println(NSString(data: newData, encoding: NSUTF8StringEncoding))
         
-        if self.baseURL == "udacity" {  // getUserID (= post session), delete a session, get public data
-            var data = data
-            let range = Range(uncheckedBounds: (5, data.count))
-            data = data.subdata(in: range) /* subset response data! */
-            print("data from convertDataWithCompletionHandler's self.baseurl = 'udacity'")
-            print(NSString(data: data, encoding: String.Encoding.utf8.rawValue)!)
-        }
+        print("self.baseURL is", self.baseURL)
+        print("Data just got passed to func convertDataWithCompletionHandler is ...", data)
         
-        
-        // it works for self.baseURL = "parse", but not for "udacity"!
+        var newData: Data = data
         var parsedResult: AnyObject! = nil
+        
+        if self.baseURL == "udacity" {
+            let range = Range(uncheckedBounds: (5, data.count)) // start reading from 5th index
+            newData = data.subdata(in: range) /* subset response data! */
+            print("newData after cutting range is",NSString(data: newData, encoding: String.Encoding.utf8.rawValue)!)
+        }
+
         do {
             print("@ do statement... ")
+            print(NSString(data: newData, encoding: String.Encoding.utf8.rawValue)!)  // if self.baseURL == "udacity - should not have ")]}'" anymore!
             
-            print(NSString(data: data, encoding: String.Encoding.utf8.rawValue)!)
-            parsedResult = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as AnyObject
-            // print("parsedResult is ...\(parsedResult)")
-            
+            parsedResult = try JSONSerialization.jsonObject(with: newData, options: .allowFragments) as AnyObject
         } catch {
             let userInfo = [NSLocalizedDescriptionKey : "Could not parse the data as JSON: '\(data)'"]
             completionHandlerForConvertData(nil, NSError(domain: "convertDataWithCompletionHandler", code: 1, userInfo: userInfo))
-        }
+        } // END of Do/Catch block
+        
         print("parsedResult is...\(parsedResult) from func convertDataWithCompletionHandler")
         completionHandlerForConvertData(parsedResult, nil)
-    }
+    } // END of func convertDataWithCompletionHandler
     
     // create a URL from parameters
     private func studentURLFromParameters(_ parameters: [String:AnyObject], withPathExtension: String? = nil) -> URL {
         
         // condition added here... to decide what url to call
        
-        print("baseURL is.. \(baseURL)") // applied to both taskForGETMethod & taskForPOSTMethod
+        print("baseURL is.. \(self.baseURL)") // applied to both taskForGETMethod & taskForPOSTMethod
         var components = URLComponents()
         
         if baseURL == "parse" {   // ApiHost = "parse.udacity.com"
@@ -309,7 +305,6 @@ class UdacityClient: NSObject { // save loginUser properties here!!
             components.scheme = UdacityClient.Constants.UdacityApiScheme
             components.host = UdacityClient.Constants.UdacityApiHost
             components.path = UdacityClient.Constants.UdacityApiPath + (withPathExtension ?? "")
-            
         }
         components.queryItems = [URLQueryItem]()
         print("after components.queryItems is \(components)")
@@ -325,8 +320,6 @@ class UdacityClient: NSObject { // save loginUser properties here!!
         
     }
 
-    
-    
     // MARK: Shared Instance  -- A singleton class returns the same instance no matter how many times an application requests it. "UdacityClient" is the return object of a singleton
     class func sharedInstance() -> UdacityClient {
         struct Singleton {
@@ -334,6 +327,4 @@ class UdacityClient: NSObject { // save loginUser properties here!!
         }
         return Singleton.sharedInstance
     }
-    
-    
 }

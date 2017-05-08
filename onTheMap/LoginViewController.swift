@@ -9,7 +9,6 @@
 import UIKit
 
 class LoginViewController: UIViewController {
-    
        
     // MARK: Properties
 //    var appDelegate: AppDelegate! - We can either place info such as sessionID, userID @ appDelegate, but I choose to store it @ UdacityClient.swift where stores everything a client does = make GET/ POST request "taskforGETRequest", etc
@@ -22,6 +21,7 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var loginButton: BorderedButton!
+    @IBOutlet weak var signUpLink: UILabel! // sign up link
     @IBOutlet weak var debugTextLabel: UILabel!
     // why does my favoritemovies app has this - @IBOutlet weak var movieImageView: UIImageView! ?? do i need one for Udacity image?
     
@@ -44,50 +44,65 @@ class LoginViewController: UIViewController {
         debugTextLabel.text = ""   // nothing to start with
     }
     
-    // MARK: Actions
+    // MARK: Label - partially clickable link
+//    signUpLink
     
+    
+    // MARK: Actions
     @IBAction func loginPressed(_ sender: AnyObject) {  // i have to change from "Any" to "AnyObject"
 //        userDidTapView(self)  - add this for textfield delegate
         
         // did this go through ?
         if emailTextField.text!.isEmpty || passwordTextField.text!.isEmpty {
-            debugTextLabel.text = "Email or Password Empty!"
+            debugTextLabel.text = "Email or Password is Empty!"
             return
         } else { // if everything is filled...
             
             setUIenabled(false) // disable email, pw, loginbutton everything while sending networking request
             
             // set & save username, password to class UdacityClient, so I can retrieve anywhere from other pages - like "UdacityConvenience"
-            UdacityClient.sharedInstance().username = emailTextField.text!
-            UdacityClient.sharedInstance().password = passwordTextField.text!
+            UdacityClient.sharedInstance().username = emailTextField.text
+            UdacityClient.sharedInstance().password = passwordTextField.text
             
-            print("udacityClient?.username is... \(UdacityClient.sharedInstance().username)")  // udacityClient?.username is... nil
-        }
+            print("udacityClient?.username is... \(                                                                                                                                                                                                     UdacityClient.sharedInstance().username)")  // udacityClient?.username is... nil
+            print("udacityClient?.password is... \(UdacityClient.sharedInstance().password)")  // udacityClient?.username is... nil
+            
+//             5/1 - comment it out to help debugging for getUserID()
+            UdacityClient.sharedInstance().authenticateWithViewController(self) {(success, errorString) in
+                performUIUpdatesOnMain {
+                    if success { // when I pass success/ error to authenticateWithViewController's completion handler
+                        self.completeLogin()
+                    } else {
+                        self.displayError(errorString) // errorString from either getUserID or getPublicData
+                    }
+                } // end of performUIUpdatesOnMain
+            } // end of authenticateWithViewController
+        } // END of if/ else
+        
     // make the request to Udacity for authentication - send POST email, password to parse server - to get session id -> so what am i going to do with that session id?
 //            UdacityClient.sharedInstance().authenticateWithUserCredentials(emailTextField.text!, passwordTextField.text!)
         
-        UdacityClient.sharedInstance().authenticateWithViewController(self) {(success, errorString) in
-            performUIUpdatesOnMain {
-                if success { // when I pass success/ error to authenticateWithViewController's completion handler
-                    self.completeLogin()
-                } else {
-                    self.displayError(errorString) // errorString from either getUserID or getPublicData
-                }
-            } // end of performUIUpdatesOnMain
-        } // end of authenticateWithViewController
+//        // Testing this to make sure if userID is retrieved first before moving it under getPublidData() @ UdacityConvenience.swift
+//        UdacityClient.sharedInstance().getUserID(UdacityClient.sharedInstance().username!, UdacityClient.sharedInstance().password!, { (success, userID, errorString) in
+//            // deal with success, userID returned back to here
+//            print("userID is", userID)
+//            UdacityClient.sharedInstance().userID = userID
+//        })
+//        
         
         
         
-        
-
         // above will return "error"/ "success" back to here.
         // if error, then debugTextLabel.text = "Incorrect password/ username"
     
       
     }  // end of loginPressed
-//
+
+    
+    
+    
             
-            
+
             // should grab the "user id" = unique key from struct [student]
             // and pass that struct student's user id to below getPublicUserData(Student.user_id)
 //            let result = UdacityClient.sharedInstance().getPublicUserData()  // return result here...
@@ -104,7 +119,9 @@ class LoginViewController: UIViewController {
 // *** uncomment below after this func is being mentioned + TabbedViewController is created on MSB
     private func completeLogin() {
         debugTextLabel.text = ""
-        let controller = storyboard!.instantiateViewController(withIdentifier: "TabbedViewController") as! UITabBarController
+//        let controller = storyboard!.instantiateViewController(withIdentifier: "TabbedViewController") as! UITabBarController - it doesn't show the TabbedBar at the top
+        let controller = storyboard!.instantiateViewController(withIdentifier: "TabbedNavigationController") as! UINavigationController
+        
         print("controller is ...\(controller)")
         present(controller, animated: true, completion: nil)
     } // end of completeLogin

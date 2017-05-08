@@ -25,47 +25,50 @@ extension UdacityClient {
     func authenticateWithViewController(_ hostViewController: UIViewController, completionHandlerForAuth: @escaping (_ success: Bool, _ errorString: String?) -> Void) {
         // success, errorString will be passed back to here from below
         
-        // call .getPublicUserData below:
+//        // call .getPublicUserData below:
         getPublicUserData() { (success, firstName, lastName, errorString) in
-            // result returns to here... - get firstname, and lastname, and saved to UdacityClient.sharedInstance().firstname
+            guard (errorString == nil) else {
+                completionHandlerForAuth(false, errorString) // pass error of getPublicUserData() to one layer up -> Auth
+                print("User doesn't seem to have firstname/ lastname from getPublicUserData")
+                return
+            }
+            // success - result returns to here... - get firstname, and lastname, and saved to UdacityClient.sharedInstance().firstname
             print("data passed from .getPublicData - firstname is ... \(firstName) & lastname is ... \(lastName)")
             // we should store the data is success
             if success {  // no need to send success/ erro back to LoginVC as it does not affect user logging in..
                 UdacityClient.sharedInstance().firstName = firstName
                 UdacityClient.sharedInstance().lastName = lastName
-            } else {
-                print("User doesn't seem to have firstname/ lastname")
+                completionHandlerForAuth(true, nil)
             }
+        } // END of getPublicUserData()
+        
+        // need to pass completionHandlerForAuth(success, errorString) back to loginVC (MSB) swift file - to either completelogin() or to displayError
+    
+        // Comment below all to now only test out. should place it inside func getPublicData() call, now, temp hardcoded user_id
+        // call 2. getUserID - check if it works...
+        
+        print("username from textfield is \(username)") // check if I successfuly save/ retrieve username, then i can pass it to .getUserID(username, pw)
+//        UdacityClient.sharedInstance().username - pass to UdacityClient already
+        //
+        
+        
+        /* DO I NEED THIS????
+        if success {
+            print("UserID is... \(userID)")
+            self.userID = userID  // self = current func authenticateWithViewController
             
+            // do i need to pass completionHandlerForAuth(success, errorString)?
+            
+            
+            // pass userID to getPublicData... - add it after testing purely getUserID
+            
+        } else {
+            completionHandlerForAuth(success, errorString)  // pass "can't retrieve user id" from .getUserID
         }
-        
-        
-        
-        
-//        // Comment below all to now only test out. getPublicData() call, hardcoded user_id
-//        // call 2. getUserID - check if it works...
-//        print("username from textfield is \(username)") // check if I successfuly save/ retrieve username, then i can pass it to .getUserID(username, pw)
-////        UdacityClient.sharedInstance().username - pass to UdacityClient already
-//        getUserID(username!, password!) { (success, userID, errorString) in  // current page is extension of UdacityClient, so I can call its properties directly - errorString passed -"can't retrieve user id"
-//            
-//            print("username passed from LoginVC is \(self.username), password is \(self.password)")
-//            
-//            if success {
-//                print("UserID is... \(userID)")
-//                self.userID = userID  // self = current func authenticateWithViewController
-//                
-//                // do i need to pass completionHandlerForAuth(success, errorString)?
-//                
-//                
-//                // pass userID to getPublicData... - add it after testing purely getUserID
-//       
-//            } else {
-//                completionHandlerForAuth(success, errorString)  // pass "can't retrieve user id" from .getUserID
-//            }
-//        } // end of .getUserID
-////
-        
-        
+    } // end of .getUserID
+    */
+    
+    
         // must pass the (completionHandlerForAuth: xxx, xxx) - so the LoginVC where .authenticateWithViewController is calling - can receive the returned "success/ errostring" - and upon those return, either completeLogin() or displayError will be called
 
         
@@ -79,29 +82,31 @@ extension UdacityClient {
         let parameters = [String:AnyObject]()
  
         print("username being passed over is.. \(username)") // username being passed over is.. spacenikki@gmail.com
+        print("password being passed over is.. \(password)")
         
         self.baseURL = "udacity"  // change the self.baseURL that func "studentURLFromParameters" reads it and return the corresponding APIScheme, APIHost, APIPath
         let method: String = Methods.Session
-        let jsonBody = "{\"udacity\": {\"username\": \"\(username)\", \"password\": \"\(password)\"}}"
-        print("jsonBody is ..\(jsonBody)") // jsonBody is ..{"udacity": {"username": "spacenikki@gmail.com", "password": "wifi=123"}} -> not matching what we wanted... 
-    
         
+        let jsonBody = "{\"udacity\": {\"username\": \"\(username)\", \"password\": \"\(password)\"}}"
+        print("***jsonBody is ..\(jsonBody)") // jsonBody is ..{"udacity": {"username": "spacenikki@gmail.com", "password": "baseball"}} -> not matching what we wanted...
+    
         /* Original @ playground:
         let request = NSMutableURLRequest(url: URL(string: "https://www.udacity.com/api/session")!)
         request.httpBody = "{\"udacity\": {\"username\": \"\(username)\", \"password\": \"\(password)\"}}".data(using: String.Encoding.utf8) */
         
         /* 2. Make the request - [pass everything from above to taskForPOSTMethod*/
         let _ = taskForPOSTMethod(method, parameters: parameters, jsonBody: jsonBody) { (results, error) in
-            
-            print("POST Session's result of func getUserID ...\(results)")
+            print("taskForPOSTMethod is call once")
             
             /* 3. Send the desired value(s) to completion handler */
             if let error = error {
-                completionHandlerForGETUserID(false, nil, "Login Failed (Can't retrieve User ID!).")
+                print(error)
+                completionHandlerForGETUserID(false, nil, "Login Failed (Can't retrieve User ID!).")   // pass errorString to one layer up to getUserID()
             } else {
                 /* { "account":{ "registered":true, "key":"3903878747" }, "session":{ "id":"1457628510Sc18f2ad4cd3fb317fb8e028488694088", "expiration":"2015-05-10T16:48:30.760460Z" } } */
                 if let result = results?[JSONResponseKeys.Account] as? [String: AnyObject] {
                     // do something with the result... get the get out...
+                    print("result is, ", result)
                     if let userID = result[JSONResponseKeys.AccountKey] {
                         // self.userID = userID as! String? -> don't do it here, do it when userID got passed back to func authenticaticatewithViewController's (from completionHandlerForGETUserID to whenever calling .getUserID (see below line)
                         completionHandlerForGETUserID(true, userID as! String, nil )
@@ -150,48 +155,70 @@ extension UdacityClient {
         // grab the session id here from result..
         // there is no need to pass session id around to next function, so no need to write completion handler
         
+/* return userID from getUserID -> pass this to func getPublicUserData
+    UdacityClient.sharedInstance().getUserID(UdacityClient.sharedInstance().username!, UdacityClient.sharedInstance().password!, { (success, userID, errorString) in
+    // deal with success, userID returned back to here
+    print("userID is", userID)
+    UdacityClient.sharedInstance().userID = userID
     
+    }) // END of UdacityClient.sharedInstance().getUserID(  */
     
     func getPublicUserData(_ completionHandlerForGetPublicData: @escaping (_ success: Bool, _ firstName: String?, _ lastName: String?, _ erroString: String?) -> Void) {
-        // GET request; need taskForGETMethod -> https://www.udacity.com/api/users/3903878747 -> need substituteKeyInMethod to add userID to it. -> "/users" passed as methods (later as withPathExtension  -> no need for parameters!
-        
-        /* 1. Specify parameters, method (if has {key}), and HTTP body (if POST) */
-        // don't need to set any parameter because there is no &limit=100 etc..
-        let parameters = [String: AnyObject]()
-        
-        self.baseURL = "udacity"
-        
-        // need substituteKeyInMethod to hard code  - i need to set its value on Udacityclient class! and remove
-        var mutableMethod: String = Methods.PublicData //https://www.udacity.com/api/users/id   static let PublicData = "/users/{id}"
-       // print(UdacityClient.sharedInstance().userID) // Optional("3903878747") hard coded @ UdacityClient.swift
-        
-        mutableMethod = substituteKeyInMethod(mutableMethod, key: URLKeys.UserID , value: UdacityClient.sharedInstance().userID!)!
-        
-       // mutableMethod = substituteKeyInMethod(mutableMethod, key: URLKeys.UserID, value: UdacityClient.sharedInstance().userID!)!  // right now hard code it as "3903878747" at UdacityClient.swift
-        
-        /* {
-         "user":{
-         "last_name":"Doe", "_facebook_id":null, "timezone":null, "site_preferences":null, "occupation":null, "_image":null, "first_name":"John", "jabber_id":null, "languages":null, "mailing_address":null}
-         }
-         */
-        
-        /* 2. Make the request */
-        let _ = taskForGETMethod(mutableMethod, parameters: parameters) { (results, error) in  // this error is from convertdataCompletionHandler.
+        UdacityClient.sharedInstance().getUserID(UdacityClient.sharedInstance().username!, UdacityClient.sharedInstance().password!, { (success, userID, errorString) in
+                guard (errorString == nil) else {
+                    print("There was an error with your request: \(errorString)")
+                    completionHandlerForGetPublicData(false, nil, nil, errorString) // enables errorString from getUserID passed one layer up to getPublicUserData from getUserID()
+                    return
+                }
+     
+                // deal with success, userID returned back to here
+                print("userID is", userID)
+                UdacityClient.sharedInstance().userID = userID
             
-            /* 3. Send the desired value(s) to completion handler */
-            if let error = error {
-                completionHandlerForGetPublicData(false, nil, nil, "Can't retrieve User's public data!")
-            } else { // either have data, can OR cannot parse!
-                print("results from getUserPublicData is \(results)")
-                if let user = results?[JSONResponseKeys.User] as? [String:AnyObject] {
-                    if let firstName = user[JSONResponseKeys.firstName], let lastName = user[JSONResponseKeys.lastName] {
-                        completionHandlerForGetPublicData(true, firstName as! String, lastName as! String, nil)
-                    } else {  /// there is no user info at all!
-                        completionHandlerForGetPublicData(false, nil, nil, "There is no result called 'User' at all!")
-                    } // end of if let firstName = user
-                } // end of if let user = results
-            } // end of else
-        } // end of taskForGETMethod
+            
+                // ONLY if after userID is returned, then start calling http request for getPublidUserData
+                // GET request; need taskForGETMethod -> https://www.udacity.com/api/users/3903878747 -> need substituteKeyInMethod to add userID to it. -> "/users" passed as methods (later as withPathExtension  -> no need for parameters!
+                /* 1. Specify parameters, method (if has {key}), and HTTP body (if POST) */
+                // don't need to set any parameter because there is no &limit=100 etc..
+                let parameters = [String: AnyObject]()
+                
+                self.baseURL = "udacity" // belongs to func getPublicUserData()
+                
+                // need substituteKeyInMethod to hard code  - i need to set its value on Udacityclient class! and remove
+                var mutableMethod: String = Methods.PublicData //https://www.udacity.com/api/users/id   static let PublicData = "/users/{id}"
+                // print(UdacityClient.sharedInstance().userID) // Optional("3903878747") hard coded @ UdacityClient.swift
+                
+                mutableMethod = self.substituteKeyInMethod(mutableMethod, key: URLKeys.UserID , value: UdacityClient.sharedInstance().userID!)!
+                //        mutableMethod = substituteKeyInMethod(mutableMethod, key: URLKeys.UserID, value: UdacityClient.sharedInstance().userID!)!  // right now hard code it as "3903878747" at UdacityClient.swift
+                
+                /* {
+                 "user":{
+                 "last_name":"Doe", "_facebook_id":null, "timezone":null, "site_preferences":null, "occupation":null, "_image":null, "first_name":"John", "jabber_id":null, "languages":null, "mailing_address":null}
+                 }
+                 */
+                
+                /* 2. Make the request */
+                let _ = self.taskForGETMethod(mutableMethod, parameters: parameters) { (results, error) in  // this error is from convertdataCompletionHandler.
+                    
+                    /* 3. Send the desired value(s) to completion handler */
+                    if let error = error {
+                        completionHandlerForGetPublicData(false, nil, nil, "Can't retrieve User's public data!")
+                    } else { // either have data, can OR cannot parse!
+                        print("results from getUserPublicData is \(results)")
+                        if let user = results?[JSONResponseKeys.User] as? [String:AnyObject] {
+                            if let firstName = user[JSONResponseKeys.firstName], let lastName = user[JSONResponseKeys.lastName] {
+                                completionHandlerForGetPublicData(true, firstName as! String, lastName as! String, nil)
+                            } else {  /// there is no user info at all!
+                                completionHandlerForGetPublicData(false, nil, nil, "There is no result called 'User' at all!")
+                            } // end of if let firstName = user
+                        } // end of if let user = results
+                    } // end of else
+                } // end of taskForGETMethod
+
+            
+        }) // END of UdacityClient.sharedInstance().getUserID(
+        
+        
     } // end of func getPublicUserData
     
     
@@ -217,6 +244,8 @@ extension UdacityClient {
     
     
     func getStudentsLocations(_ completionHandlerForGetStudentLocations: @escaping (_ results: [StudentLocation]?, _ error: NSError?) -> Void){
+        
+        print("getStudentsLocations is called")
         
         /* 1. Specify parameters, method (if has {key}), and HTTP body (if POST) */
         var parameters = [String: AnyObject]()
@@ -343,13 +372,16 @@ extension UdacityClient {
     
     
     func submitStudentLoc() {
-        // call get a student location
+        
+       // call get a student location
         getaStudentloc() { (state, error) in   // state will be either
             if let error = error {   // if error != nil
                 print(error)  // "Can't retrieve any record of this login user!
             } else {  // has to be either PUT / POST
                 print("state is \(state)")
                 if state == "PUT" { // true - have record already
+                    // Add alertViewcontroller to display "overwrite?" - but seems to do it
+                    
                     // call PUT request
                     self.putAStudentLoc(){(success, error) in
                         // handles success, error
@@ -359,8 +391,6 @@ extension UdacityClient {
                             print("A new record has replaced the old one")
                         } // end of if/else block
                     } // end of self.putAStudentLoc()
-                    
-                    // Add alertViewcontroller to display "overwrite?" - but seems to do it
                     
                 } else if state == "POST" {  // false - no record before
                     // call POST a student location request
@@ -391,14 +421,19 @@ extension UdacityClient {
         // I want - "https://parse.udacity.com/parse/classes/StudentLocation"
         let method: String = Methods.StudentLocation  // /classes/StudentLocation
         
-        // jsonbody - copy the parts from playground to here
-        let firstname = UdacityClient.sharedInstance().firstName
-        let lastname = UdacityClient.sharedInstance().lastName
-        let uniqueKey = UdacityClient.sharedInstance().userID
-        let mapString = UdacityClient.sharedInstance().location
-        let mediaURL = UdacityClient.sharedInstance().mediaURL
-        let latitude = UdacityClient.sharedInstance().latitude
-        let longitude = UdacityClient.sharedInstance().longitude
+        UdacityClient.sharedInstance().userID = "179" // test for brand new POST call
+        UdacityClient.sharedInstance().firstName = "Jennifer"
+        UdacityClient.sharedInstance().lastName = "Aniston" // temp - as lastname was "nil"
+        
+        /* jsonbody - copy the parts from playground to here - "!" if not added -
+        cause error - "number not found */
+        let firstname = UdacityClient.sharedInstance().firstName!
+        let lastname = UdacityClient.sharedInstance().lastName!
+        let uniqueKey = UdacityClient.sharedInstance().userID!
+        let mapString = UdacityClient.sharedInstance().location!
+        let mediaURL = UdacityClient.sharedInstance().mediaURL!
+        let latitude = UdacityClient.sharedInstance().latitude!
+        let longitude = UdacityClient.sharedInstance().longitude!
         
         let jsonBody = "{\"uniqueKey\": \"\(uniqueKey)\", \"firstName\": \"\(firstname)\", \"lastName\": \"\(lastname)\",\"mapString\": \"\(mapString)\", \"mediaURL\": \"\(mediaURL)\",\"latitude\": \(latitude), \"longitude\": \(longitude)}"
             // delete .data(using: String.Encoding.utf8) here , as func taskForPOSTMethod will add that to the body!
@@ -453,8 +488,9 @@ extension UdacityClient {
         // call substituteKeyInMethod(_ method: String, key: String, value: String) -> String? {
         mutableMethod = substituteKeyInMethod(mutableMethod, key: URLKeys.ObjectID, value: UdacityClient.sharedInstance().objectID!)!
         print("mutableMethod is ", mutableMethod)
+        UdacityClient.sharedInstance().firstName = "Macro"
+        UdacityClient.sharedInstance().lastName = "Polo" // temp - as lastname was "nil" -> cause statuscode != 2xx when putting request made
         
-        UdacityClient.sharedInstance().lastName = "Way" // temp - as lastname was "nil" -> cause statuscode != 2xx when putting request made
         // jsonbody - copy the parts from playground to here
         let firstname = UdacityClient.sharedInstance().firstName!
         let lastname = UdacityClient.sharedInstance().lastName! // add "!" to avoid optional input to the PUT request - if not, it will be
@@ -495,11 +531,14 @@ extension UdacityClient {
        
         // expect url - "https://parse.udacity.com/parse/classes/StudentLocation?where=%7B%22uniqueKey%22%3A%225555%22%7D"  //uniqueKey = 5555
         
-        UdacityClient.sharedInstance().userID = "1234" // PUT
+//         UdacityClient.sharedInstance().userID = "1234" // PUT
 //        UdacityClient.sharedInstance().userID = "22"  // POST - no record before - error: {"error":"Unexpected number"}
 //        UdacityClient.sharedInstance().userID = "555" // POST
+        print("UdacityClient.sharedInstance().userID is ...", UdacityClient.sharedInstance().userID)
+        UdacityClient.sharedInstance().userID = "178"
+        let uniquekey = UdacityClient.sharedInstance().userID
         
-        let uniquekey = UdacityClient.sharedInstance().userID!
+//        let uniquekey = UdacityClient.sharedInstance().userID! - uncomment it after deleting above hard coded ones
         
         var parameters = [String: AnyObject!]()
         parameters["where"] = "{\"uniqueKey\":\"\(uniquekey)\"}" as AnyObject??
@@ -551,6 +590,12 @@ extension UdacityClient {
         } // end of let _ = taskForGETMethod
         // return count back to submitStudentLoc
     }  // end of func getaStudentloc
+    
+    func deleteASession() -> Void {
+        
+    } // end of deleteASession()
+    
+    
 }  // end of class
 
 

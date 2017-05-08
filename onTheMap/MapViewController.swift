@@ -28,77 +28,41 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     
     // add the properties in struct studentlocation - to expect what will be passed to here. 
     var locations: [StudentLocation] = [StudentLocation]()
+    var returnedAnnotations: [MKPointAnnotation] = [MKPointAnnotation]()
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        print("@viewWillAppear, data being passed are \(self.locations)")
+        print("MapVC's viewWillAppear is called")
+        print("@viewWillAppear, data being passed from TabbedVC to MapViewController are \(self.locations)")
 //        let locations = self.locations
+//        print("returnedAnnotations inside mapView is", returnedAnnotations) // [] - nothing
+        // remove annotation - testing 2
+        let allAnnotations = self.mapView.annotations
+        self.mapView.removeAnnotations(allAnnotations)
+        
+        self.mapView.addAnnotations(returnedAnnotations)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // get Locations data
-        // let locations = hardCodedLocationData()   // [[String : AnyObject]]
-        // print("locations from hardCodedLocationData() is \(locations)")
-        
+        print("MapVC's viewDidLoad is called")
         // replace hardCodedLocationData() with -> "self.location" passed from tabbedViewController
-        let locations = self.locations
-        print("locations got passed over \(locations)") // [] -> nothing!!
+        // let locations = self.locations - no need because global "locations" was set at the beginning!
+        print("locations got passed over from tabbedVC to MapViewCcontroller is \(locations), right before for loop") // [] -> nothing!!
         
-        var annotations = [MKPointAnnotation]()
-        // set an empty array that belongs to MKPointAnnotation class
-        // The MKPointAnnotation class defines a concrete annotation object located at a specified point
-        // i can set properties to the annotation by- var coordinate: CLLocationCoordinate2D { lat, long set }
-        print("right before for dictionary in locations")
-        // and display location data...
-        // going through the dictionary "locations", assign properties of each location to properties of the annotation (=the pin on the map view) = create a MKPointAnnotation for each location
         
-        // BELOW FOR LOOP NEVER GOT CALLED !!!!! WHY???
-        for dictionary in locations {
-            print("I am inside a dictionary ")
-            
-            // when v1 use hardcoded locations - let locations = hardCodedLocationData() -> [[String : AnyObject]], use below to call "key" "latitude"
-            // CCLocationCoordinate2D only takes long+lat in type "CCLocationDegress" - convert!
-            // let lat = CLLocationDegrees(dictionary["latitude"] as! Double) - call latitude with "dictionary["latitude"]"
-            
-            // Now, v2, we use locations returned from TabbedVC's getStudentLocations() - datastructure: 
-            // ([onTheMap.StudentLocation(firstName: "Michael", lastName: "Stram", latitude: 41.883229, longitude: 0.0, mapString: "Chicago", ..), onTheMap.StudentLocation(firstName: "Ryan", lastName: "Phan", latitude: 37.338208199999997, longitude: -121.8863286, mapString: "San Jose, CA")
-            
-            // CCLocationCoordinate2D only takes long+lat in type "CCLocationDegress" - convert!
-            let lat = CLLocationDegrees(dictionary.latitude)
-            let long = CLLocationDegrees(dictionary.longitude)
-            let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
-            
-            // properties here - then assign first to annotation (the pin on mapview)
-            let first = dictionary.firstName
-            let last = dictionary.lastName
-            let mediaURL = dictionary.mediaURL
-            print("mediaURL inside for dictionary in locations is.. \(mediaURL)") // NOTHING!
-            
-            // Assign above properties of EACH location to EACH annotation (the pin on mapview) - to DISPLAY on mapview - 
-            // coordinate (extra), title, subtitle -> these 2 are similar to the "cell view" before.. the view always these as placeholder
-            let annotation = MKPointAnnotation()   // as array [annotations] only holds MKPointAnnotation OBJECTS -> so here, we create an object that is type MKPointAnnotation() -> that is annotation.
-            annotation.coordinate = coordinate
-            annotation.title = "\(first) \(last)"
-            annotation.subtitle = mediaURL
-            
-            // We place the annotation in an array of annotation first before commanding the view to display
-            annotations.append(annotation)
-        } // END of for dictionary in locations {
+//        let builtAnnotations = buildAnnotationsList()  // builtAnnotations = [annotation1, annotation2, ...]
         
         // update the outlet "mapView" with annotatioons set above
-        self.mapView.addAnnotations(annotations)
+        // original : self.mapView.addAnnotations(Annotations)
+        print("returnedAnnotations is ", returnedAnnotations)
+        
+//        self.mapView.addAnnotations(returnedAnnotations) // it wouldn't work here ... as viewDidLoad only got called ONCE
        
     } // END of override func viewDidLoad()
 
     /* Since you are processing the data that is passed from tabbedViewController, instead of locally here "hardCodedData()". "hardCodedData()" - we put inside viewDidLoad VS "Location" INSIDE func similar to table - override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {   // CALL LOCATION DATA what was passed from another VC - TabbedVC */
 
-    
-    
-    
-    
-    
     
 // MARK: - MKMapViewDelegate - Calling its func here ...
 // Like each row indexPath, add the next content. Similar here each spot, add the next annotation

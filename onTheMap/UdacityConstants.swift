@@ -29,7 +29,7 @@ extension UdacityClient { // Instead of storing them under UdacityClient, I just
         //        GETting a Student Location - https://parse.udacity.com/parse/classes/StudentLocation
 
         static let UdacityApiScheme = "https"
-        static let UdacityApiHost = "udacity.com"
+        static let UdacityApiHost = "www.udacity.com"
         static let UdacityApiPath = "/api"
 
         // @ func convertDataWithCompletionHandler - add this line - let range = Range(5 ..< data!.count), only for Udacity API
@@ -78,7 +78,7 @@ extension UdacityClient { // Instead of storing them under UdacityClient, I just
     struct ParameterValues {
         
         // get student locations
-        static let Limit = "3" // need to change it back to 100
+        static let Limit = "50" // need to change it back to 100
         static let Skip = "400"
         static let Order = "-updatedAt"
        

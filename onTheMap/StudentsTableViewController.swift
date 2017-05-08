@@ -18,19 +18,23 @@ class StudentsTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        print("****StudentsTableVC's viewDidLoad is called ")
+        
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
-
+        print("when user clicks tableView icon, code on that file will execute")
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
         navigationItem.title = "On The Map"
+
+        
 //        print("StudentTableView's (from viewwillappear) location.count is.. \(self.locations.count)") // #100 when refresh button is clicked...but 0 when i click back and forth the map, table icon....
     } // end of viewDidLoad
     
     //  need to populate data here before this page is loaded
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        print("****StudentsTableVC's viewWillAppear is called ")
     } // end of viewWillAppear
     
     // MARK: - Table view data source
