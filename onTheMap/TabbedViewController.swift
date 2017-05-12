@@ -24,18 +24,19 @@ class TabbedViewController: UITabBarController {
         
         logOutAlert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (action: UIAlertAction!) in
             // call deleteSession!
-            self.deleteSession()
-            self.dismiss(animated: true, completion: nil)  // dismiss tabbedVC back to login page
+            UdacityClient.sharedInstance().deleteASession()
+            logOutAlert.dismiss(animated: true, completion: nil) // dismiss  Alert
+            self.dismiss(animated: true, completion: nil)  // dismiss tabbedVC back to login page- but slow... - ASK mentor..
         }))
         
         logOutAlert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { (action: UIAlertAction!) in
             self.logOutBtn.isEnabled = true
-            self.dismiss(animated: true, completion: nil)  // dismiss alertbox
+            logOutAlert.dismiss(animated: true, completion: nil) // dismiss alertbox
         }))
 
-        self.present(logOutAlert, animated: true, completion: nil)
-        // do i need to reset all logged user info?? - erase when login page is loaded before new user entered their credentials
-        
+        performUIUpdatesOnMain {
+            self.present(logOutAlert, animated: true, completion: nil)
+        }
     } // end of logoutBtnPressed
     
     // add "refresh" button action
@@ -50,13 +51,13 @@ class TabbedViewController: UITabBarController {
                     // reload data ... but i dont have access to the tablview / mapview...
                     let StudentTable = self.viewControllers?[1] as? StudentsTableViewController
                     StudentTable?.locations = self.locations  // must have this to pass locations to next VC
-                    print("StudentTable?.locations\(StudentTable?.locations)")
+//                    print("StudentTable?.locations\(StudentTable?.locations)")
                     StudentTable?.tableView.reloadData() // reloaddata when refreshbutton is clicked
                     
                     // pass locations , reloaddata @ mapviewcontroller
                     let StudentMap = self.viewControllers?[0] as? MapViewController
                     StudentMap?.locations = self.locations
-                    print("StudentMap?.locations - \(StudentMap?.locations)")
+//                    print("StudentMap?.locations - \(StudentMap?.locations)")
               
                     
                     // remove annotation - testing 1 - when refreshing - pin are gone BUT never get back
@@ -72,33 +73,7 @@ class TabbedViewController: UITabBarController {
         }
     } // end of refreshBtnPressed
     
-    // deleteSession when logout is confirmed
-    func deleteSession() -> Void {
-        // call Deleting session + go back to loginViewController
-        let request = NSMutableURLRequest(url: URL(string: "https://www.udacity.com/api/session")!)
-        request.httpMethod = "DELETE"
-        var xsrfCookie: HTTPCookie? = nil
-        let sharedCookieStorage = HTTPCookieStorage.shared
-        for cookie in sharedCookieStorage.cookies! {
-            if cookie.name == "XSRF-TOKEN" { xsrfCookie = cookie }
-        }
-        if let xsrfCookie = xsrfCookie {
-            request.setValue(xsrfCookie.value, forHTTPHeaderField: "X-XSRF-TOKEN")
-        }
-        let session = URLSession.shared
-        let task = session.dataTask(with: request as URLRequest) { data, response, error in
-            if error != nil { // Handle error…
-                return
-            }
-            let range = Range(uncheckedBounds: (5, data!.count - 5))
-            let newData = data?.subdata(in: range) /* subset response data! */
-            print("Logout is pressed, results as below")
-            // do it right with "Encoding.utf8.rawValue" since call is to udacity.com
-            print(NSString(data: newData!, encoding: String.Encoding.utf8.rawValue)!)
-        }
-        task.resume()
-    } // END of deleteSession()
-
+   
     // Construct AnnotationsList
     func buildAnnotationsList() -> [MKPointAnnotation] {
         
@@ -124,9 +99,9 @@ class TabbedViewController: UITabBarController {
             // ([onTheMap.StudentLocation(firstName: "Michael", lastName: "Stram", latitude: 41.883229, longitude: 0.0, mapString: "Chicago", ..), onTheMap.StudentLocation(firstName: "Ryan", lastName: "Phan", latitude: 37.338208199999997, longitude: -121.8863286, mapString: "San Jose, CA")
             
 //             testing only
-             print("lets check out location")
-            print(dictionary.latitude)
-            print(dictionary.longitude)
+//             print("lets check out location")
+//            print(dictionary.latitude)
+//            print(dictionary.longitude)
             
             
             // CCLocationCoordinate2D only takes long+lat in type "CCLocationDegress" - convert!
@@ -138,7 +113,7 @@ class TabbedViewController: UITabBarController {
             let first = dictionary.firstName
             let last = dictionary.lastName
             let mediaURL = dictionary.mediaURL
-            print("mediaURL inside for dictionary in locations is.. \(mediaURL)") // NOTHING!
+//            print("mediaURL inside for dictionary in locations is.. \(mediaURL)") // NOTHING!
             
             // Assign above properties of EACH location to EACH annotation (the pin on mapview) - to DISPLAY on mapview -
             // coordinate (extra), title, subtitle -> these 2 are similar to the "cell view" before.. the view always these as placeholder
@@ -151,7 +126,7 @@ class TabbedViewController: UITabBarController {
             
             annotations.append(annotation)  // annotations = [annotation1, annotation2, annotation3, ...]
         } // END of "for dictionary in locations"
-        print("annotations array inside buildAnnotationArray is ", annotations) // RETURNED - have stuff in it.
+//        print("annotations array inside buildAnnotationArray is ", annotations) // RETURNED - have stuff in it.
         return annotations
     } // END of func buildAnnotationsList()
 
@@ -184,7 +159,7 @@ class TabbedViewController: UITabBarController {
                     let StudentTable = self.viewControllers?[1] as? StudentsTableViewController
                     
                     StudentTable?.locations = self.locations // neccessary -> to pass locations to next VC
-                    print("now, passing locations from TabbedVC to TableViewController data: ", StudentTable?.locations )
+//                    print("now, passing locations from TabbedVC to TableViewController data: ", StudentTable?.locations )
                     
                     // let's comment it out and only call this when refreshbutton is clicked!
                      StudentTable?.tableView.reloadData() // it wouldn't work as viewDidLoad only run once, if u post a new student, dismiss infoPostingVC, and show tableview again, it won't "reloadData"
@@ -196,9 +171,9 @@ class TabbedViewController: UITabBarController {
                     
                     // all these runs!!!
                     let testing = self.buildAnnotationsList()
-                    print("testing is, ", testing )
+//                    print("testing is, ", testing )
                     StudentMap?.returnedAnnotations = self.buildAnnotationsList()  // return annotations [MKPointAnnotation]
-                    print("StudentMap?.returnedAnnotations is", StudentMap?.returnedAnnotations)
+//                    print("StudentMap?.returnedAnnotations is", StudentMap?.returnedAnnotations)
                   
                     // call func displayAnnotation written @ mapViewController.
                     // i should INSTEAD dealt with locations HERE

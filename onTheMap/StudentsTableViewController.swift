@@ -47,13 +47,13 @@ class StudentsTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        print("@ tableVC, locations passed is \(self.locations)")
+//        print("@ tableVC, locations passed is \(self.locations)")
         return self.locations.count
     }
 
     // to display data of each user - from self.locations on this page.
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        print("locations got passed \(locations)")
+//        print("locations got passed \(locations)")
         let cell = tableView.dequeueReusableCell(withIdentifier: "LabelCell", for: indexPath)
         let student = locations[(indexPath as NSIndexPath).row] // that serve "for loop" to loop thr 100 locations
         

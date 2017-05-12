@@ -40,7 +40,7 @@ struct StudentLocation {
             
             studentsLocations.append(StudentLocation(dictionary: result)) // when appending 1. a STRUCT StudentLocation -> append(StudentLocation(....)), it starts 2.to all initialize - means creating a dictionary which is "result" and put matching value to it - i.e. "dictionary: result"
         }
-        print("studentsLocations from StudentsLocationsFromResults is... \(studentsLocations)")
+//        print("studentsLocations from StudentsLocationsFromResults is... \(studentsLocations)")
         return studentsLocations
         
         

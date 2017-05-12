@@ -48,7 +48,7 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate {
     
     @IBAction func submitMediaURL(_ sender: Any) {
         let link = mediaURL.text! as String
-        print("link is", link)
+       
         if (link.isEmpty) {
             mediaDebug.text = "Media URL cannot be blank"
             return
@@ -57,13 +57,49 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate {
             return
         } else {
         // check if mediaURL is valid first ... - aborted as iOS9 requires to pre-register links app is going to list, limit - 50...
-            print("input mediaURL is ", link)
+           
             UdacityClient.sharedInstance().mediaURL = link
             
             // hard code userID (=unique key) for now..
-            UdacityClient.sharedInstance().submitStudentLoc() // will do all of below
-            self.dismiss(animated: true, completion: nil) // go back to mapVC/ StudentsTVC
-            
+            UdacityClient.sharedInstance().submitStudentLoc() {(success, error) in  // will do all of below
+            // should pass error back to here.... - have error -> alert view controller, no error, dismiss info view controller
+                
+                /* a block to listen when "state" == "put", pop alertVC for overwrite
+                 overwrite - 2 actions - 1. yes -> then call UdacityClient.shareInstance().putastudentlocation , 2. */
+                
+                print("error and success is \(error) \(success) INSIDE UdacityClient.sharedInstance().submitStudentLoc() ")
+                
+                guard (error == nil) else {  // have error
+                    print("getAstudent failed, should show Alert box")
+                    
+                    let failedAddStudentAlert = UIAlertController(title: "Failure", message: error, preferredStyle: UIAlertControllerStyle.alert)
+                    failedAddStudentAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action: UIAlertAction!) in
+                        failedAddStudentAlert.dismiss(animated: true, completion: nil)
+                        self.dismiss(animated: true, completion: nil) // go back to mapVC/ StudentsTVC 
+                        // alert box -> "ok" (background still InfoPostingVC)-> then dismiss VC back to map view... - i want
+                    }))
+                    
+                    performUIUpdatesOnMain {
+                        self.present(failedAddStudentAlert, animated: true, completion: nil)
+                    }
+//                     self.dismiss(animated: true, completion: nil) // go back to mapVC/ StudentsTVC
+//                     alert box appears + dismiss VC back to map view at the same time. background becomes map vc already
+                    return // return is for guard () else
+                } // End of if error != nil
+                
+                if success {
+                    let addStudentAlert = UIAlertController(title: "Success", message: "Your Info are successfully added", preferredStyle: UIAlertControllerStyle.alert)
+                    addStudentAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action: UIAlertAction!) in
+                        addStudentAlert.dismiss(animated: true, completion: nil) // dismiss Alert - when user clicks OK
+                    }))
+                    
+                    performUIUpdatesOnMain {
+                        self.present(addStudentAlert, animated: true, completion: nil)
+                    }
+                    self.dismiss(animated: true, completion: nil) // go back to mapVC/ StudentsTVC
+                } // END of if success
+                
+            } // END of UdacityClient.sharedInstance().submitStudentLoc()
             // call several calls @ below submitStudentLoc()
             // 1. get a student location
             // 2. if nil call 2. POST a student location
@@ -82,6 +118,7 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate {
                     result - canOpen - always FALSE as we didn't pre-register it!          
               } // end of "if let checkedMediaURL"  */
         } // end of else
+        
     } // end of @IBAction func submitMediaURL
     
     
@@ -111,7 +148,8 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate {
             UdacityClient.sharedInstance().forwardGeocoding(location) { (latitude, longitude, error) in
                  // sharedInstance() -> create a Udacity class -> func forwardGeocoding is under that class.
                 // placemarks as AnyObject , error returned
-                print("UdacityClient.sharedInstance().forwardGeocoding(location) even runs??")
+                print("UdacityClient.sharedInstance().forwardGeocoding(location) runs")
+                
                 if error != nil {
                     print(error)
 //                    self.debugArea.text = error

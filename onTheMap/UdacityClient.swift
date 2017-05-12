@@ -261,7 +261,7 @@ class UdacityClient: NSObject { // save loginUser properties here!!
     private func convertDataWithCompletionHandler(_ data: Data, completionHandlerForConvertData: (_ result: AnyObject?, _ error: NSError?) -> Void) {
         
         print("self.baseURL is", self.baseURL)
-        print("Data just got passed to func convertDataWithCompletionHandler is ...", data)
+//        print("Data just got passed to func convertDataWithCompletionHandler is ...", data)
         
         var newData: Data = data
         var parsedResult: AnyObject! = nil
@@ -269,12 +269,12 @@ class UdacityClient: NSObject { // save loginUser properties here!!
         if self.baseURL == "udacity" {
             let range = Range(uncheckedBounds: (5, data.count)) // start reading from 5th index
             newData = data.subdata(in: range) /* subset response data! */
-            print("newData after cutting range is",NSString(data: newData, encoding: String.Encoding.utf8.rawValue)!)
+//            print("newData after cutting range is",NSString(data: newData, encoding: String.Encoding.utf8.rawValue)!)
         }
 
         do {
             print("@ do statement... ")
-            print(NSString(data: newData, encoding: String.Encoding.utf8.rawValue)!)  // if self.baseURL == "udacity - should not have ")]}'" anymore!
+//            print(NSString(data: newData, encoding: String.Encoding.utf8.rawValue)!)  // if self.baseURL == "udacity - should not have ")]}'" anymore!
             
             parsedResult = try JSONSerialization.jsonObject(with: newData, options: .allowFragments) as AnyObject
         } catch {
@@ -282,7 +282,7 @@ class UdacityClient: NSObject { // save loginUser properties here!!
             completionHandlerForConvertData(nil, NSError(domain: "convertDataWithCompletionHandler", code: 1, userInfo: userInfo))
         } // END of Do/Catch block
         
-        print("parsedResult is...\(parsedResult) from func convertDataWithCompletionHandler")
+//        print("parsedResult is...\(parsedResult) from func convertDataWithCompletionHandler")
         completionHandlerForConvertData(parsedResult, nil)
     } // END of func convertDataWithCompletionHandler
     

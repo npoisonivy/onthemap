@@ -204,7 +204,7 @@ extension UdacityClient {
                     if let error = error {
                         completionHandlerForGetPublicData(false, nil, nil, "Can't retrieve User's public data!")
                     } else { // either have data, can OR cannot parse!
-                        print("results from getUserPublicData is \(results)")
+//                        print("results from getUserPublicData is \(results)")
                         if let user = results?[JSONResponseKeys.User] as? [String:AnyObject] {
                             if let firstName = user[JSONResponseKeys.firstName], let lastName = user[JSONResponseKeys.lastName] {
                                 completionHandlerForGetPublicData(true, firstName as! String, lastName as! String, nil)
@@ -371,36 +371,46 @@ extension UdacityClient {
     } // end of func placeAnnotation
     
     
-    func submitStudentLoc() {
+    func submitStudentLoc(_ completionHandlerForSubmitStudentLoc: @escaping (_ success: Bool, _ error: String?) -> Void) {
         
        // call get a student location
         getaStudentloc() { (state, error) in   // state will be either
             if let error = error {   // if error != nil
                 print(error)  // "Can't retrieve any record of this login user!
+                completionHandlerForSubmitStudentLoc(false, error)
+                
             } else {  // has to be either PUT / POST
                 print("state is \(state)")
+                
                 if state == "PUT" { // true - have record already
-                    // Add alertViewcontroller to display "overwrite?" - but seems to do it
+                    // PASS "state" to Add alertViewcontroller to display "overwrite?" -
+//                    completionHandlerForSubmitStudentLoc("??", "put")
                     
                     // call PUT request
                     self.putAStudentLoc(){(success, error) in
                         // handles success, error
                         if let error = error {
                             print(error)
+                            completionHandlerForSubmitStudentLoc(false, error)
                         } else { // success
                             print("A new record has replaced the old one")
+                            completionHandlerForSubmitStudentLoc(true, nil)
                         } // end of if/else block
                     } // end of self.putAStudentLoc()
                     
                 } else if state == "POST" {  // false - no record before
                     // call POST a student location request
+                    print("UserID \(UdacityClient.sharedInstance().userID)) firstname is \(UdacityClient.sharedInstance().firstName)  lastname is \(UdacityClient.sharedInstance().lastName) objectID is \(UdacityClient.sharedInstance().objectID)")
+                    
                     self.postAStudentLoc(){(success, objectID, error) in   // elements passed from completionHandlerForPostAStudentLoc
                         // done with POST request ALREADY - so now, let's deal with success, objectID, error here
                         if let error = error {  // error != nil
                             print(error)
+                            completionHandlerForSubmitStudentLoc(false, error)
                         }
                         if let objectID = objectID { // no error, only success!
                             print("POST a student location request is successfuly, object id is", objectID)
+                            completionHandlerForSubmitStudentLoc(true, nil)
                         }
                     } // end of self.postAStudentLoc()
                 }  /* end of else if state == "POST" */
@@ -410,6 +420,8 @@ extension UdacityClient {
     
     // MARK : postAStudentLoc()
     func postAStudentLoc(_ completionHandlerForPostAStudentLoc: @escaping (_ success: Bool, _ objectID: String?, _ errorString: String?) -> Void) {  // need completion handler - to see if successul or not.. object or..
+        print("UserID \(UdacityClient.sharedInstance().userID)) firstname is \(UdacityClient.sharedInstance().firstName)  lastname is \(UdacityClient.sharedInstance().lastName) objectID is \(UdacityClient.sharedInstance().objectID)")
+        
         // 1. prepare para, baseURL, method, jsonBody (if post)
         // parameters - nothing
         let parameters = [String:AnyObject]()
@@ -536,7 +548,8 @@ extension UdacityClient {
 //        UdacityClient.sharedInstance().userID = "555" // POST
         print("UdacityClient.sharedInstance().userID is ...", UdacityClient.sharedInstance().userID)
         // UdacityClient.sharedInstance().userID = "178"
-        let uniquekey = UdacityClient.sharedInstance().userID
+        let uniquekey = UdacityClient.sharedInstance().userID!
+        print("uniquekey is \(uniquekey)")
         
 //        let uniquekey = UdacityClient.sharedInstance().userID! - uncomment it after deleting above hard coded ones
         
@@ -556,7 +569,7 @@ extension UdacityClient {
             // completionHandlerForGET will come back here - then i will use parsedResult (type: AnyObject), error here @ completionHandlerForGETaStudentLoc (this func!)
             // parsedData
             if let error = error {  // means if error != nil
-                completionHandlerForGETaStudentLoc(nil, "Can't retrieve any record of this login user!")
+                completionHandlerForGETaStudentLoc(nil, "GET- Can't retrieve any record of this login user!")
             } else {
                 print("result of this user is \(resultback)")
                 // resultback -> its datatype from taskForGETMethod is -> "_ result: AnyObject?" ->  {    results:[{ : }, {:}]     } -> To retrieve key [results] - need to 1. convert AnyObject to Dict -> 2. get call Dict[results] -> to see its count!
@@ -591,11 +604,32 @@ extension UdacityClient {
         // return count back to submitStudentLoc
     }  // end of func getaStudentloc
     
+    // deleteSession when logout is confirmed
     func deleteASession() -> Void {
-        
-    } // end of deleteASession()
-    
-    
+        // call Deleting session + go back to loginViewController
+        let request = NSMutableURLRequest(url: URL(string: "https://www.udacity.com/api/session")!)
+        request.httpMethod = "DELETE"
+        var xsrfCookie: HTTPCookie? = nil
+        let sharedCookieStorage = HTTPCookieStorage.shared
+        for cookie in sharedCookieStorage.cookies! {
+            if cookie.name == "XSRF-TOKEN" { xsrfCookie = cookie }
+        }
+        if let xsrfCookie = xsrfCookie {
+            request.setValue(xsrfCookie.value, forHTTPHeaderField: "X-XSRF-TOKEN")
+        }
+        let session = URLSession.shared
+        let task = session.dataTask(with: request as URLRequest) { data, response, error in
+            if error != nil { // Handle error…
+                return
+            }
+            let range = Range(uncheckedBounds: (5, data!.count - 5))
+            let newData = data?.subdata(in: range) /* subset response data! */
+            print("Logout is pressed, results as below")
+            // do it right with "Encoding.utf8.rawValue" since call is to udacity.com
+            print(NSString(data: newData!, encoding: String.Encoding.utf8.rawValue)!)
+        }
+        task.resume()
+    } // END of deleteSession()
 }  // end of class
 
 
