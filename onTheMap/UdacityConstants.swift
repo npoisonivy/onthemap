@@ -138,8 +138,8 @@ extension UdacityClient { // Instead of storing them under UdacityClient, I just
         static let firstName = "first_name"
         static let lastName = "last_name"
         
-        
-        
+        // handle error returned inside "data"
+        static let Error = "error" // {"status": 403, "error": "Account not found or invalid credentials."}
         
     }
     

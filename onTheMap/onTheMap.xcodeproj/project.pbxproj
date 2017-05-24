@@ -10,7 +10,6 @@
 		A04166481E6A072400E6FC68 /* StudentsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A04166471E6A072400E6FC68 /* StudentsTableViewController.swift */; };
 		A041664E1E6B4CC500E6FC68 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A041664D1E6B4CC500E6FC68 /* MapViewController.swift */; };
 		A06E99861E668E80000A4D93 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06E99851E668E80000A4D93 /* AppDelegate.swift */; };
-		A06E99881E668E80000A4D93 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06E99871E668E80000A4D93 /* ViewController.swift */; };
 		A06E998B1E668E80000A4D93 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A06E99891E668E80000A4D93 /* Main.storyboard */; };
 		A06E998D1E668E80000A4D93 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A06E998C1E668E80000A4D93 /* Assets.xcassets */; };
 		A06E99991E668F48000A4D93 /* GCDBlackBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06E99981E668F48000A4D93 /* GCDBlackBox.swift */; };
@@ -31,7 +30,6 @@
 		A041664D1E6B4CC500E6FC68 /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		A06E99821E668E80000A4D93 /* onTheMap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = onTheMap.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A06E99851E668E80000A4D93 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		A06E99871E668E80000A4D93 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ViewController.swift; path = onTheMap/ViewController.swift; sourceTree = "<group>"; };
 		A06E998A1E668E80000A4D93 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		A06E998C1E668E80000A4D93 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A06E99911E668E80000A4D93 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -123,7 +121,6 @@
 		A06E99A01E669090000A4D93 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				A06E99871E668E80000A4D93 /* ViewController.swift */,
 				A06E99B71E66963A000A4D93 /* BorderedButton.swift */,
 			);
 			name = View;
@@ -232,7 +229,6 @@
 				A06E99B61E6695A3000A4D93 /* UdacityStudentLocation.swift in Sources */,
 				A06E99A41E66919A000A4D93 /* LoginViewController.swift in Sources */,
 				A06E99B81E66963A000A4D93 /* BorderedButton.swift in Sources */,
-				A06E99881E668E80000A4D93 /* ViewController.swift in Sources */,
 				A06E99991E668F48000A4D93 /* GCDBlackBox.swift in Sources */,
 				A06E99861E668E80000A4D93 /* AppDelegate.swift in Sources */,
 				A041664E1E6B4CC500E6FC68 /* MapViewController.swift in Sources */,

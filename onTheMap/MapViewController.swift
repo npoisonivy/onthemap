@@ -24,22 +24,22 @@ import MapKit
 
 class MapViewController: UIViewController, MKMapViewDelegate {
 
-    @IBOutlet weak var mapView: MKMapView!
+    @IBOutlet weak var mapView: MKMapView! // it does not have MKMapViewDelegate till adding "self.mapView.delegate = self  // self = MapVC.swift"
     
-    // add the properties in struct studentlocation - to expect what will be passed to here. 
-    var locations: [StudentLocation] = [StudentLocation]()
+    // add the properties in struct studentlocation - to expect what will be passed to here.
     var returnedAnnotations: [MKPointAnnotation] = [MKPointAnnotation]()
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         print("MapVC's viewWillAppear is called")
-        print("@viewWillAppear, data being passed from TabbedVC to MapViewController are \(self.locations)")
 //        let locations = self.locations
 //        print("returnedAnnotations inside mapView is", returnedAnnotations) // [] - nothing
+        
+        self.mapView.delegate = self  // self = MapVC.swif
+        
         // remove annotation - testing 2
         let allAnnotations = self.mapView.annotations
         self.mapView.removeAnnotations(allAnnotations)
-        
         self.mapView.addAnnotations(returnedAnnotations)
     }
     
@@ -48,17 +48,16 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         print("MapVC's viewDidLoad is called")
         // replace hardCodedLocationData() with -> "self.location" passed from tabbedViewController
         // let locations = self.locations - no need because global "locations" was set at the beginning!
-        print("locations got passed over from tabbedVC to MapViewCcontroller is \(locations), right before for loop") // [] -> nothing!!
-        
-        
+        // @ TabbedVC -> buildAnnotationsList() (below) is called, and it is passed to current MapVC
 //        let builtAnnotations = buildAnnotationsList()  // builtAnnotations = [annotation1, annotation2, ...]
         
         // update the outlet "mapView" with annotatioons set above
         // original : self.mapView.addAnnotations(Annotations)
         print("returnedAnnotations is ", returnedAnnotations)
         
-//        self.mapView.addAnnotations(returnedAnnotations) // it wouldn't work here ... as viewDidLoad only got called ONCE
-       
+        self.mapView.delegate = self  // self = MapVC.swift
+        
+        //        self.mapView.addAnnotations(returnedAnnotations) // it wouldn't work here ... as viewDidLoad only got called ONCE
     } // END of override func viewDidLoad()
 
     /* Since you are processing the data that is passed from tabbedViewController, instead of locally here "hardCodedData()". "hardCodedData()" - we put inside viewDidLoad VS "Location" INSIDE func similar to table - override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {   // CALL LOCATION DATA what was passed from another VC - TabbedVC */
@@ -108,7 +107,6 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             }
         }
     }
-    
     
     // MARK: - Sample Data
     

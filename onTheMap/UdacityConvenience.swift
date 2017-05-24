@@ -99,9 +99,16 @@ extension UdacityClient {
             print("taskForPOSTMethod is call once")
             
             /* 3. Send the desired value(s) to completion handler */
+            // error for no internet only
             if let error = error {
-                print(error)
-                completionHandlerForGETUserID(false, nil, "Login Failed (Can't retrieve User ID!).")   // pass errorString to one layer up to getUserID()
+                print("error from getUserID is ... \(error)")
+                
+                // "error" returned back to taskForPOSTMethod - datatype is NSError
+                // completionHandlerForGETUserID expects:: @ escaping (_ success: Bool, _ userID: String?, _ errorString: String?)
+                // convert NSError -> errorString
+                completionHandlerForGETUserID(false, nil, "No internet connection")
+                // completionHandlerForGETUserID(false, nil, error.localizedDescription ) // pass errorString to one layer up to getUserID()
+                // completionHandlerForGETUserID(false, nil, "Login Failed (Can't retrieve User ID!).")   // pass errorString to one layer up to getUserID()
             } else {
                 /* { "account":{ "registered":true, "key":"3903878747" }, "session":{ "id":"1457628510Sc18f2ad4cd3fb317fb8e028488694088", "expiration":"2015-05-10T16:48:30.760460Z" } } */
                 if let result = results?[JSONResponseKeys.Account] as? [String: AnyObject] {
@@ -111,10 +118,19 @@ extension UdacityClient {
                         // self.userID = userID as! String? -> don't do it here, do it when userID got passed back to func authenticaticatewithViewController's (from completionHandlerForGETUserID to whenever calling .getUserID (see below line)
                         completionHandlerForGETUserID(true, userID as! String, nil )
                     } else {
+                        // when username/ pw doent match0 - no error but result differs.
                         print("Could not find \(JSONResponseKeys.UserID) in \(results)")
-                        completionHandlerForGETUserID(false, nil, "There is no User ID returned! (User ID")
-                    }
+//                        completionHandlerForGETUserID(false, nil, "There is no User ID returned! (User ID")
+                        completionHandlerForGETUserID(false, nil, "Can't authinticate the user! (User ID")
+                    } // End of "else"
                 } // end of if let result = results?
+                
+                // deal with incorrect credential result:
+                if let error = results?[JSONResponseKeys.Error] as? String {
+                    // if there is error, then extract it - {"status": 403, "error": "Account not found or invalid credentials."}
+                    completionHandlerForGETUserID(false, nil, error)
+                    // pass errorString to completionHandlerForGETUserID(_ success: Bool, _ userID: String?, _ errorString: String?) -> Void)
+                }
             } // end of else
         } // end of taskForPOSTMethod
     } // end of func  getUserID
@@ -277,6 +293,7 @@ extension UdacityClient {
                 
                     
                     // transform my result to a dictionary with more structed studentlocation preset by struct [StudentLocation] & StudentsLocationsFromResults @ UdacityStudentLocation - now open another UdacityStudentLocation.swift to build func StudentsLocationsFromResults
+                    
                     let studentlocations = StudentLocation.StudentsLocationsFromResults(results)
                     // studentlocations is - [(),(),()] - [(firstName: "Michael", lastName: "Stram", ..), (firstName: "Michael", lastName: "Stram", latitude: 41.883229, longitude: 0.0, mapString: "Chica)]
 //                    print("inside getstudentslocations \(studentlocations)")
@@ -284,7 +301,7 @@ extension UdacityClient {
                     completionHandlerForGetStudentLocations(studentlocations, nil)
                 } else {
                     // if cannot parse the data
-                    completionHandlerForGetStudentLocations(nil, NSError(domain: "getFavoriteMovies parsing", code: 0, userInfo: [NSLocalizedDescriptionKey: "Could not parse getStudentLocations"]))
+                    completionHandlerForGetStudentLocations(nil, NSError(domain: "getStudentsLocations parsing", code: 0, userInfo: [NSLocalizedDescriptionKey: "Could not parse getStudentLocations"]))
                 }
             }
         }  // end of let_ = taskForGETMethod
@@ -464,7 +481,8 @@ extension UdacityClient {
             // {"code":111,"error":"schema mismatch for StudentLocation.longitude; expected Number but got String"}
 
             if let error = error {
-                completionHandlerForPostAStudentLoc(false, nil, "Post a Student Location request failed" )
+                // completionHandlerForPostAStudentLoc(false, nil, "Post a Student Location request failed" )
+                completionHandlerForPostAStudentLoc(false, nil, error.localizedDescription )
             } else {  // no error
 //                success: Bool, _ objectID: String?, _ errorString:
                 // grab the objectID out
@@ -531,7 +549,9 @@ extension UdacityClient {
             // when statusCode is 404 - it will still send result - result wont come here but under "dataTask"
             // need to reconstruct below according to what result to return from the PUT request
             if let error = error {  // this error (occurs when sending out request, amd a faieled request will have this error) is != as error from server
-                completionHandlerForPUTAStudentLoc(false, "Put a Student Location request failed" )
+                // completionHandlerForPUTAStudentLoc(false, "Put a Student Location request failed" )
+                completionHandlerForPUTAStudentLoc(false, error.localizedDescription )
+                
             } else {  // no error
                 //  success: Bool, _ errorString: - result: {"updatedAt":"2017-04-25T05:58:44.619Z"}
                 completionHandlerForPUTAStudentLoc(true, nil)
@@ -569,7 +589,9 @@ extension UdacityClient {
             // completionHandlerForGET will come back here - then i will use parsedResult (type: AnyObject), error here @ completionHandlerForGETaStudentLoc (this func!)
             // parsedData
             if let error = error {  // means if error != nil
-                completionHandlerForGETaStudentLoc(nil, "GET- Can't retrieve any record of this login user!")
+                // completionHandlerForGETaStudentLoc(nil, "GET- Can't retrieve any record of this login user!")
+                completionHandlerForGETaStudentLoc(nil, error.localizedDescription)
+                
             } else {
                 print("result of this user is \(resultback)")
                 // resultback -> its datatype from taskForGETMethod is -> "_ result: AnyObject?" ->  {    results:[{ : }, {:}]     } -> To retrieve key [results] - need to 1. convert AnyObject to Dict -> 2. get call Dict[results] -> to see its count!

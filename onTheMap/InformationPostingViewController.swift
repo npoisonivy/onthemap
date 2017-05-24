@@ -48,14 +48,18 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate {
     
     @IBAction func submitMediaURL(_ sender: Any) {
         let link = mediaURL.text! as String
-       
+       // disable button
+        
         if (link.isEmpty) {
-            mediaDebug.text = "Media URL cannot be blank"
+            self.displayError("Media URL cannot be blank")
+            // enable button AGAIN
             return
         } else if !(link.hasPrefix("http://") || link.hasPrefix("https://"))  {
-            mediaDebug.text = "Please add prefix - 'http:// or https://'"
+            self.displayError("Please add prefix - 'http:// or https://'")
+            // enable button AGAIN
             return
         } else {
+            
         // check if mediaURL is valid first ... - aborted as iOS9 requires to pre-register links app is going to list, limit - 50...
            
             UdacityClient.sharedInstance().mediaURL = link
@@ -64,7 +68,7 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate {
             UdacityClient.sharedInstance().submitStudentLoc() {(success, error) in  // will do all of below
             // should pass error back to here.... - have error -> alert view controller, no error, dismiss info view controller
                 
-                /* a block to listen when "state" == "put", pop alertVC for overwrite
+                /* inside func submitStudentLoc - has listener for when "state" == "put", pop alertVC for overwrite
                  overwrite - 2 actions - 1. yes -> then call UdacityClient.shareInstance().putastudentlocation , 2. */
                 
                 print("error and success is \(error) \(success) INSIDE UdacityClient.sharedInstance().submitStudentLoc() ")
@@ -75,6 +79,7 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate {
                     let failedAddStudentAlert = UIAlertController(title: "Failure", message: error, preferredStyle: UIAlertControllerStyle.alert)
                     failedAddStudentAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action: UIAlertAction!) in
                         failedAddStudentAlert.dismiss(animated: true, completion: nil)
+                        
                         self.dismiss(animated: true, completion: nil) // go back to mapVC/ StudentsTVC 
                         // alert box -> "ok" (background still InfoPostingVC)-> then dismiss VC back to map view... - i want
                     }))
@@ -84,8 +89,10 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate {
                     }
 //                     self.dismiss(animated: true, completion: nil) // go back to mapVC/ StudentsTVC
 //                     alert box appears + dismiss VC back to map view at the same time. background becomes map vc already
+
                     return // return is for guard () else
                 } // End of if error != nil
+                
                 
                 if success {
                     let addStudentAlert = UIAlertController(title: "Success", message: "Your Info are successfully added", preferredStyle: UIAlertControllerStyle.alert)
@@ -127,15 +134,18 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate {
     }
     
     @IBAction func findOnMapBtnPressed(_ sender: Any) {
+        // once it's pressed, UI configure
+        
+        
         // geocode location string -> latitude + longtitude -> pass as var to sharedInstance().var - > MKMapView @ POST url view can retrieve it -> at that view, u add Mapview there.
         if locationInput.text!.isEmpty {
-            debugArea.text = "Location cannot be blank"
-            // view stays...
+            self.displayError("Location cannot be blank") // InfoPostingVC stays...
             return
         } else { // have something...
             let location = locationInput.text! as String
             // do i need to store location to sharedInstance().location/?
             UdacityClient.sharedInstance().location = location
+            
             
             print("location is \(location)")
             
@@ -150,9 +160,13 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate {
                 // placemarks as AnyObject , error returned
                 print("UdacityClient.sharedInstance().forwardGeocoding(location) runs")
                 
-                if error != nil {
+                // stop activity indicator here 
+                
+                if error != nil { // error is an NSerror, displayError expects String....
                     print(error)
 //                    self.debugArea.text = error
+                    // call displayError() -> which shows alert window
+                    self.displayError(error?.localizedDescription) // convert NSError to String with ".localizedDescription"
                     return
                 } else {  // no error
                     print("saving latitude, longitude as UdacityClient.sharedInstance()") // runs
@@ -190,8 +204,51 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate {
     } // end of  @IBAction func findOnMapBtnPressed
 } // end of class
 
+// MARK: - InformationPostingViewController - Configure UI
+private extension InformationPostingViewController {
+    
+    func setUIEnabled(_ enabled: Bool) {
+        // disable button "submit" and what else ??
+        
+        if enabled {
+            // button.alpha = 1.0
+        } else {
+            // button.alpha = 0.5
+        }
+        
+    }
+    
+    func displayError(_ errorString: String?) {
+        if let errorString = errorString {
+            
+            // set UI alertVC
+            let errorAlert = UIAlertController(title: "Failure", message: errorString, preferredStyle: UIAlertControllerStyle.alert)
+            errorAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(action: UIAlertAction!) in
+                // what happens after "OK" is pressed? - dismiss the alertbox - back to original login page
+                errorAlert.dismiss(animated: true, completion: nil)
+            }))
+            
+            // need to call alert to present
+            performUIUpdatesOnMain {
+                self.present(errorAlert, animated: true, completion: nil) // have to place any interface code on mainQueue
+            }
+        }
+    } // End of func displayError()
+}
 
 // no need for below - because both views share the SAME view controller....
 //  when data is passed, bring to next controller.
 // let controller = self.storyboard!.instantiateViewController(withIdentifier: "MediaPostingViewController")
 // self.present(controller, animated: true, completion: nil)
+
+
+
+
+
+
+
+
+
+
+
+

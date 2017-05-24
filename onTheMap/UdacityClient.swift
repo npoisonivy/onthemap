@@ -82,18 +82,23 @@ class UdacityClient: NSObject { // save loginUser properties here!!
                 return
             }
             
-            /* GUARD: Did we get a successful 2XX response? */
-            guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
-                sendError("Your request returned a status code other than 2xx!")
-                return
-            }
-            
             /* GUARD: Was there any data returned? */
             guard let data = data else {
                 sendError("No data was returned by the request!")
                 return
             }
             
+            print("data is ", NSString(data: data, encoding: String.Encoding.utf8.rawValue)!)
+            
+            /* GUARD: Did we get a successful 2XX response? */
+            guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
+                
+                sendError( (NSString(data: data, encoding: String.Encoding.utf8.rawValue)!) as String)
+                // sendError("Your request returned a status code other than 2xx!")
+                return
+            }
+            
+         
             /* 5/6. Parse the data and use the data (happens in completion handler) */
             self.convertDataWithCompletionHandler(data, completionHandlerForConvertData: completionHandlerForGET) // parsedData returned to completionHandlerForConvertData: completionHandlerForGET -> parsedData, error passed to "completionHandlerForGet -> then it returned back to where taskForGetMethod is called!
             
@@ -140,13 +145,18 @@ class UdacityClient: NSObject { // save loginUser properties here!!
             func sendError(_ error: String) {
                 print(error)
                 let userInfo = [NSLocalizedDescriptionKey : error]
-                completionHandlerForPOST(nil, NSError(domain: "taskForGETMethod", code: 1, userInfo: userInfo))
+                completionHandlerForPOST(nil, NSError(domain: "taskForPOSTMethod", code: 1, userInfo: userInfo))
             }
             
             /* GUARD: Was there an error? */
             guard (error == nil) else {
                 print(error)
-                sendError("There was an error with your request: \(error)")
+                // screen off "optional"
+                if let error = error {
+                    sendError("\(error.localizedDescription)")
+                }
+                // sendError("error is \(error?.localizedDescription)")
+                // sendError("There was an error with your request: \(error)")
                 return
             }
             
@@ -158,15 +168,17 @@ class UdacityClient: NSObject { // save loginUser properties here!!
             // after passing "guard let data = data" - means data != nil now
             print("guard let data -", NSString(data: data, encoding: String.Encoding.utf8.rawValue)!)
             
-            /* GUARD: Did we get a successful 2XX response? */
+            /* GUARD: Did we get a successful 2XX response?
             guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
                 sendError("Your request returned a status code other than 2xx!")
                 return
-            }
+            } */
             
             print("data is....\(data)") // data is....270 bytes
             /* 5/6. Parse the data and use the data (happens in completion handler) */
-            self.convertDataWithCompletionHandler(data, completionHandlerForConvertData: completionHandlerForPOST)
+            self.convertDataWithCompletionHandler(data, completionHandlerForConvertData: completionHandlerForPOST)  // completion handler to pass is "completionHandlerForPOST"
+            // which is (parsedResult, nil) from completionHandlerForConvertData(parsedResult, nil)
+            
         }
         
         /* 7. Start the request */
@@ -175,8 +187,8 @@ class UdacityClient: NSObject { // save loginUser properties here!!
         return task
     } // end of POST request
     
-    // MARK: PUT
-    func taskForPUTMethod(_ method: String, parameters: [String:AnyObject], jsonBody: String, completionHandlerForPOST: @escaping (_ result: AnyObject?, _ error: NSError?) -> Void) -> URLSessionDataTask {
+    // MARK: PUT  --
+    func taskForPUTMethod(_ method: String, parameters: [String:AnyObject], jsonBody: String, completionHandlerForPUT: @escaping (_ result: AnyObject?, _ error: NSError?) -> Void) -> URLSessionDataTask {
         
         /* 1. Set the parameters - we don't need this as no need to add apiKey for this project*/
         //        var parametersWithApiKey = parameters
@@ -201,7 +213,7 @@ class UdacityClient: NSObject { // save loginUser properties here!!
             func sendError(_ error: String) {
                 print(error)
                 let userInfo = [NSLocalizedDescriptionKey : error]
-                completionHandlerForPOST(nil, NSError(domain: "taskForGETMethod", code: 1, userInfo: userInfo))
+                completionHandlerForPUT(nil, NSError(domain: "taskForGETMethod", code: 1, userInfo: userInfo))
             }
             
             /* GUARD: Was there an error? */
@@ -226,7 +238,7 @@ class UdacityClient: NSObject { // save loginUser properties here!!
             }
             
             /* 5/6. Parse the data and use the data (happens in completion handler) */
-            self.convertDataWithCompletionHandler(data, completionHandlerForConvertData: completionHandlerForPOST)
+            self.convertDataWithCompletionHandler(data, completionHandlerForConvertData: completionHandlerForPUT)
         }
         
         /* 7. Start the request */
@@ -277,6 +289,7 @@ class UdacityClient: NSObject { // save loginUser properties here!!
 //            print(NSString(data: newData, encoding: String.Encoding.utf8.rawValue)!)  // if self.baseURL == "udacity - should not have ")]}'" anymore!
             
             parsedResult = try JSONSerialization.jsonObject(with: newData, options: .allowFragments) as AnyObject
+            print(parsedResult)
         } catch {
             let userInfo = [NSLocalizedDescriptionKey : "Could not parse the data as JSON: '\(data)'"]
             completionHandlerForConvertData(nil, NSError(domain: "convertDataWithCompletionHandler", code: 1, userInfo: userInfo))

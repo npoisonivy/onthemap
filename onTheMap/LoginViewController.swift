@@ -74,6 +74,7 @@ class LoginViewController: UIViewController {
                         self.completeLogin()
                     } else {
                         self.displayError(errorString) // errorString from either getUserID or getPublicData
+                        // alertVC, message: errorString
                     }
                 } // end of performUIUpdatesOnMain
             } // end of authenticateWithViewController
@@ -149,9 +150,20 @@ private extension LoginViewController {
     
     func displayError(_ errorString: String?) {
         if let errorString = errorString {
-            debugTextLabel.text = errorString
+            
+            // set UI alertVC
+            let errorAlert = UIAlertController(title: "Failure", message: errorString, preferredStyle: UIAlertControllerStyle.alert)
+            errorAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(action: UIAlertAction!) in
+                // what happens after "OK" is pressed? - dismiss the alertbox - back to original login page
+                errorAlert.dismiss(animated: true, completion: nil)
+            }))
+            
+            // need to call alert to present
+            performUIUpdatesOnMain {
+                self.present(errorAlert, animated: true, completion: nil) // have to place any interface code on mainQueue
+            }
         }
-    }
+    } // End of func displayError()
 }
 
     // I didn't add below in - as it's related to UI, front end
