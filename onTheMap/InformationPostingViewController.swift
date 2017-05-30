@@ -11,7 +11,7 @@ import CoreLocation
 import AddressBookUI
 import MapKit
 
-class InformationPostingViewController: UIViewController, MKMapViewDelegate {
+class InformationPostingViewController: UIViewController, MKMapViewDelegate, UITextFieldDelegate {
     // for google map api
 //    let baseURL = "https://maps.googleapis.com/maps/api/geocode/json?"
 //    let apikey = "AIzaSyD9Jjbs5ZOW05aS2ZYF8j_EV_NCbRXPwKk"
@@ -24,14 +24,24 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate {
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var mediaURL: UITextField!
     
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    
     @IBOutlet weak var mediaDebug: UILabel!
+    
+    // MARK: declare textfield's delegate
+    let locationTextField  = TextFieldDelegate()
+    let mediaURLTextField = TextFieldDelegate()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        debugArea.text = ""
+        // hide ActivityIndicator
+        self.hideAI(true)
         
+        // Do we still need it after replacing 
+        debugArea.text = ""
         mediaDebug.text = ""
+        
         // then I don't need to keep "uninstall" The location view, to work on media view
         mediaDebug.lineBreakMode = NSLineBreakMode.byWordWrapping
         mediaDebug.numberOfLines = 4
@@ -39,7 +49,7 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate {
         locationPostingStackView.isHidden = false
         mediaURLPostingStackView.isHidden = true
 //        UdacityClient.sharedInstance().firstName = "testing111"
-        
+    
     } // end of viewDidLoad()
  
     override func viewDidAppear(_ animated: Bool) {
@@ -145,9 +155,10 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate {
             let location = locationInput.text! as String
             // do i need to store location to sharedInstance().location/?
             UdacityClient.sharedInstance().location = location
-            
-            
             print("location is \(location)")
+            
+            // show AI
+            self.hideAI(false)
             
             // Google :
 //            let baseURL = "https://maps.googleapis.com/maps/api/geocode/json?"
@@ -156,6 +167,9 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate {
             // apple - call forwardGeocoding() - return lat/ long, and we save it, then mkmapview will be using it to show location pin annotation.
             // GeoCoding
             UdacityClient.sharedInstance().forwardGeocoding(location) { (latitude, longitude, error) in
+                
+                self.hideAI(true) // after HTTP completes, and latitude, longitude, error returned back here
+                
                  // sharedInstance() -> create a Udacity class -> func forwardGeocoding is under that class.
                 // placemarks as AnyObject , error returned
                 print("UdacityClient.sharedInstance().forwardGeocoding(location) runs")
@@ -234,7 +248,26 @@ private extension InformationPostingViewController {
             }
         }
     } // End of func displayError()
+    
+    // configure activityIndicator
+    func hideAI(_ enabled: Bool) -> Void {
+        activityIndicator.isHidden = enabled  // take T/F
+        // configure
+        // activityIndicator.hidesWhenStopped = true - MSB already sets
+        if enabled {  // true
+            activityIndicator.stopAnimating()
+        } else {  // false
+            activityIndicator.startAnimating()
+        }
+        // when true -> hide it -> stopanimating
+        // when false -> show it -> startanimating
+    }
 }
+
+
+
+
+
 
 // no need for below - because both views share the SAME view controller....
 //  when data is passed, bring to next controller.

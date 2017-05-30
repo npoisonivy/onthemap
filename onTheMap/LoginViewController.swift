@@ -8,14 +8,13 @@
 
 import UIKit
 
-class LoginViewController: UIViewController {
+class LoginViewController: UIViewController, UITextFieldDelegate {
        
     // MARK: Properties
 //    var appDelegate: AppDelegate! - We can either place info such as sessionID, userID @ appDelegate, but I choose to store it @ UdacityClient.swift where stores everything a client does = make GET/ POST request "taskforGETRequest", etc
     var keyboardOnScreen = false
     var session: URLSession!
 //    var udacityClass: UdacityClient? = UdacityClient() // so i can call class UdacityClient's (for logged in user) properties there - ex: UserID, firstName, lastName
-    
     
     // MARK: Outlets
     @IBOutlet weak var emailTextField: UITextField!
@@ -25,11 +24,21 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var debugTextLabel: UILabel!
     // why does my favoritemovies app has this - @IBOutlet weak var movieImageView: UIImageView! ?? do i need one for Udacity image?
     
+    // name the delegates
+//     let emailTextDelegate = Text
+
+    let emailDelegate = TextFieldDelegate()
+    let passwordDelegate = TextFieldDelegate()
+    
     // MARK: Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad() // what does this mean?
-//        configureBackground() - do i need this ?? what is the code for "orange"? This is for blue
-//        udacityClient = 
+        
+        // MARK: Declare each textField's delegate
+        self.emailTextField.delegate = self.emailDelegate
+        self.passwordTextField.delegate = self.passwordDelegate
+        
+        // configureBackground() - do i need this ?? what is the code for "orange"? This is for blue
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -37,6 +46,13 @@ class LoginViewController: UIViewController {
         emailTextField.text = ""
         passwordTextField.text = ""
         setUIenabled(true)
+        
+        subscribeToKeyboardNotifications()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        unsubscribeToKeyboardNotifications()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -164,6 +180,43 @@ private extension LoginViewController {
             }
         }
     } // End of func displayError()
+    
+    func subscribeToKeyboardNotifications() {
+        // write func "keyboardWillShow"/ "keyboardWillHide"  -
+        NotificationCenter.default.addObserver(self, selector: #selector(LoginViewController.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(LoginViewController.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+    }
+    
+    // even when KBWillshow is detected - still need to see what to do based on whats going on with the textfield
+    @objc func keyboardWillShow(_ notification: NSNotification) {
+        if emailTextField.isFirstResponder || passwordTextField.isFirstResponder {
+            view.frame.origin.y = getKeyboardHeight(notification) * (-1)
+        } else {
+            reset()
+        }
+    }
+    
+    @objc func keyboardWillHide(_ notification: NSNotification) {
+        reset()
+    }
+    
+    // pass notification from KBWillshow to getKeyboardHeight() -> trigger this func to run, and return KB's height back to KBWillShow func
+    func getKeyboardHeight(_ notification: NSNotification) -> CGFloat {
+        let userInfo = notification.userInfo!
+        let keyboardSize = userInfo[UIKeyboardFrameEndUserInfoKey] as! NSValue // Userinfo contains KB's frame info
+        return keyboardSize.cgRectValue.height
+    }
+    
+    func reset() {
+        self.view.frame.origin.y = 0
+    }
+    
+    func unsubscribeToKeyboardNotifications() {
+        // remove notification from system - not listening to UIKeyboardWillShow/ Hide anymore
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+    }
+    
 }
 
     // I didn't add below in - as it's related to UI, front end
