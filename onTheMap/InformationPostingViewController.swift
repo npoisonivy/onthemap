@@ -29,8 +29,8 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
     @IBOutlet weak var mediaDebug: UILabel!
     
     // MARK: declare textfield's delegate
-    let locationTextField  = TextFieldDelegate()
-    let mediaURLTextField = TextFieldDelegate()
+    let locationDelegate  = TextFieldDelegate()
+    let mediaURLDelegate = TextFieldDelegate()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,7 +38,7 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
         // hide ActivityIndicator
         self.hideAI(true)
         
-        // Do we still need it after replacing 
+        // Do we still need it after replacing debug.text with AlertViewController ?
         debugArea.text = ""
         mediaDebug.text = ""
         
@@ -48,7 +48,10 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
         
         locationPostingStackView.isHidden = false
         mediaURLPostingStackView.isHidden = true
-//        UdacityClient.sharedInstance().firstName = "testing111"
+        
+        // Declare textField's delegate
+        self.locationInput.delegate = locationDelegate
+        self.mediaURL.delegate = mediaURLDelegate
     
     } // end of viewDidLoad()
  
