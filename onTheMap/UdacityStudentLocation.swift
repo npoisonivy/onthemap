@@ -5,7 +5,7 @@
 //  Created by Nikki L on 2/28/17.
 //  Copyright © 2017 Nikki. All rights reserved.
 //
-
+import Foundation
 // set struct StudentLocation, and a func to proceed lots of StudentLocations collecting from a GET request from xxx.swift
 struct StudentLocation {
     
@@ -34,7 +34,7 @@ struct StudentLocation {
     static func StudentsLocationsFromResults(_ results: [[String: AnyObject]]) -> [StudentLocation] {
         // proceed the result, and transform it to a struct [StudentLocation]
         
-        var studentsLocations = [StudentLocation]()   // empty Struct studentLocations containing lots of individual [StudentLocation]
+        var studentsLocations = [StudentLocation]()   // empty Struct studentLocations that will contain lots of individual [StudentLocation]
         
         for result in results {
             
@@ -87,6 +87,18 @@ struct StudentLocation {
          */
         
     }
+    
+} // struct StudentLocation
+// MARK: Shared Instance  -- A singleton class returns the same instance no matter how many times an application requests it. "StudentModel" is the return object of a singleton
+// A class of StudentLocations
+class StudentModel {
+    var listofStudents: [StudentLocation] = []
+    
+    class func sharedInstance() -> StudentModel {
+        struct Singleton {
+            static var sharedInstance = StudentModel()
+        }
+        return Singleton.sharedInstance
+    }
 }
-
 

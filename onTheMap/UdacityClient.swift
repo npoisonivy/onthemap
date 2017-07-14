@@ -88,7 +88,7 @@ class UdacityClient: NSObject { // save loginUser properties here!!
                 return
             }
             
-            print("data is ", NSString(data: data, encoding: String.Encoding.utf8.rawValue)!)
+            // print("data is ", NSString(data: data, encoding: String.Encoding.utf8.rawValue)!)
             
             /* GUARD: Did we get a successful 2XX response? */
             guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
@@ -289,7 +289,7 @@ class UdacityClient: NSObject { // save loginUser properties here!!
 //            print(NSString(data: newData, encoding: String.Encoding.utf8.rawValue)!)  // if self.baseURL == "udacity - should not have ")]}'" anymore!
             
             parsedResult = try JSONSerialization.jsonObject(with: newData, options: .allowFragments) as AnyObject
-            print(parsedResult)
+            // print(parsedResult)
         } catch {
             let userInfo = [NSLocalizedDescriptionKey : "Could not parse the data as JSON: '\(data)'"]
             completionHandlerForConvertData(nil, NSError(domain: "convertDataWithCompletionHandler", code: 1, userInfo: userInfo))

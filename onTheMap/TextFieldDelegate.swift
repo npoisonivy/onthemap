@@ -16,9 +16,10 @@ class TextFieldDelegate: NSObject, UITextFieldDelegate {
         if textField.placeholder == "Email" || textField.placeholder == "Password" || textField.placeholder == "City here" || textField.placeholder == "Enter Your Media URL here" {
             textField.placeholder = ""
         }
-    }
-    
-    // when user taps another extfield
+    } // end of func textFieldDidBeginEditing
+
+
+    // when user taps another textfield
     func textFieldDidEndEditing(_ textField: UITextField, reason: UITextFieldDidEndEditingReason) {
         textField.resignFirstResponder()
         // when user taps another textfield without typing anything, placeholder will show..
@@ -35,7 +36,7 @@ class TextFieldDelegate: NSObject, UITextFieldDelegate {
         }
     }
     
-    // VERY IMPORTANT - to capture new user's input after a failed submission - user reenter a new value in textfield on UI -> DOES NOT MEAN that when they enter it, our code is going to register the NEW value! -> we must call shouldchangeCharactersIn -> to REALLY "register" the NEW value!
+    // *** VERY IMPORTANT - to capture new user's input after a failed submission - user reenter a new value in textfield on UI -> DOES NOT MEAN that when they enter it, our code is going to register the NEW value! -> we must call shouldchangeCharactersIn -> to REALLY "register" the NEW value!
     // either we set "Email/ Password" as placeholder / real text, we need this func regardless
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         var newText: NSString
@@ -64,13 +65,13 @@ class TextFieldDelegate: NSObject, UITextFieldDelegate {
                 textField.placeholder = "Password"
             }
         }
-        
+        return true
         /*if (textField.text!.isEmpty) && textField.tag == 1 {
             textField.text = "Top"
         } else if (textField.text!.isEmpty) && textField.tag == 2 {
             textField.text = "Bottom"
         } */
-        return true
+        
     }
 }
 

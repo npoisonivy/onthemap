@@ -78,7 +78,7 @@ extension UdacityClient { // Instead of storing them under UdacityClient, I just
     struct ParameterValues {
         
         // get student locations
-        static let Limit = "50" // need to change it back to 100
+        static let Limit = "100" // need to change it back to 100
         static let Skip = "400"
         static let Order = "-updatedAt"
        

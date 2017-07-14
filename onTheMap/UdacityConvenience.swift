@@ -298,6 +298,12 @@ extension UdacityClient {
                     // studentlocations is - [(),(),()] - [(firstName: "Michael", lastName: "Stram", ..), (firstName: "Michael", lastName: "Stram", latitude: 41.883229, longitude: 0.0, mapString: "Chica)]
 //                    print("inside getstudentslocations \(studentlocations)")
 //                    print("count is \(studentlocations.count)") // 100 - right!
+                    
+                    // create annotation here.....
+                    // mapview.addannotation()
+                    
+                    
+                    
                     completionHandlerForGetStudentLocations(studentlocations, nil)
                 } else {
                     // if cannot parse the data
@@ -518,8 +524,8 @@ extension UdacityClient {
         // call substituteKeyInMethod(_ method: String, key: String, value: String) -> String? {
         mutableMethod = substituteKeyInMethod(mutableMethod, key: URLKeys.ObjectID, value: UdacityClient.sharedInstance().objectID!)!
         print("mutableMethod is ", mutableMethod)
-//        UdacityClient.sharedInstance().firstName = "Macro"
-//        UdacityClient.sharedInstance().lastName = "Polo" // temp - as lastname was "nil" -> cause statuscode != 2xx when putting request made
+        // UdacityClient.sharedInstance().firstName = "Macro"
+        // UdacityClient.sharedInstance().lastName = "Polo" // temp - as lastname was "nil" -> cause statuscode != 2xx when putting request made
         
         // jsonbody - copy the parts from playground to here
         let firstname = UdacityClient.sharedInstance().firstName!
@@ -567,7 +573,7 @@ extension UdacityClient {
 //        UdacityClient.sharedInstance().userID = "22"  // POST - no record before - error: {"error":"Unexpected number"}
 //        UdacityClient.sharedInstance().userID = "555" // POST
         print("UdacityClient.sharedInstance().userID is ...", UdacityClient.sharedInstance().userID)
-        // UdacityClient.sharedInstance().userID = "178"
+         // UdacityClient.sharedInstance().userID = "178"
         let uniquekey = UdacityClient.sharedInstance().userID!
         print("uniquekey is \(uniquekey)")
         

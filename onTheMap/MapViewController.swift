@@ -26,38 +26,46 @@ class MapViewController: UIViewController, MKMapViewDelegate {
 
     @IBOutlet weak var mapView: MKMapView! // it does not have MKMapViewDelegate till adding "self.mapView.delegate = self  // self = MapVC.swift"
     
-    // add the properties in struct studentlocation - to expect what will be passed to here.
-    var returnedAnnotations: [MKPointAnnotation] = [MKPointAnnotation]()
+    // var locations: [StudentLocation] = [StudentLocation]() // prepare its type as struct -> prepares it to received the value from "getStudentLocations(C.H. returns: studentlocation, error) from tabbedVC.swift"
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         print("MapVC's viewWillAppear is called")
-//        let locations = self.locations
-//        print("returnedAnnotations inside mapView is", returnedAnnotations) // [] - nothing
         
-        self.mapView.delegate = self  // self = MapVC.swif
+        self.mapView.delegate = self  // self = MapVC.swift
         
-        // remove annotation - testing 2
-        let allAnnotations = self.mapView.annotations
+        print("locations passed from tabbedVC @ viewWillAppear is..", StudentModel.sharedInstance().listofStudents)
+        
+        // remove all annotations before showing the new ones
+        // below is called ONLY when Mapview icon is clicked --> but NOT when refresh is pressed!
+        // print("showing all new locations on map")
+        
+        buildAnnotationsList()
+        
+        /*let allAnnotations = self.mapView.annotations
         self.mapView.removeAnnotations(allAnnotations)
-        self.mapView.addAnnotations(returnedAnnotations)
+        self.mapView.addAnnotations(buildAnnotationsList())// returned datatype: [MKPointAnnotation]*/
+    
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         print("MapVC's viewDidLoad is called")
+        print("locations passed from tabbedVC @ viewDidLoad is..", StudentModel.sharedInstance().listofStudents)
         // replace hardCodedLocationData() with -> "self.location" passed from tabbedViewController
-        // let locations = self.locations - no need because global "locations" was set at the beginning!
+        // let locations = StudentModel.sharedInstance().listofStudents - no need because global "locations" was set at the beginning!
         // @ TabbedVC -> buildAnnotationsList() (below) is called, and it is passed to current MapVC
 //        let builtAnnotations = buildAnnotationsList()  // builtAnnotations = [annotation1, annotation2, ...]
         
-        // update the outlet "mapView" with annotatioons set above
+        // update the outlet "mapView" with annotations set above
         // original : self.mapView.addAnnotations(Annotations)
-        print("returnedAnnotations is ", returnedAnnotations)
         
         self.mapView.delegate = self  // self = MapVC.swift
         
-        //        self.mapView.addAnnotations(returnedAnnotations) // it wouldn't work here ... as viewDidLoad only got called ONCE
+        print("buildAnnotationsList is ", buildAnnotationsList())
+        
+        
+        
     } // END of override func viewDidLoad()
 
     /* Since you are processing the data that is passed from tabbedViewController, instead of locally here "hardCodedData()". "hardCodedData()" - we put inside viewDidLoad VS "Location" INSIDE func similar to table - override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {   // CALL LOCATION DATA what was passed from another VC - TabbedVC */
@@ -164,3 +172,100 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     }
 
 }
+
+extension MapViewController {
+    // Construct AnnotationsList
+    func buildAnnotationsList() -> Void {
+        
+        let allAnnotations = self.mapView.annotations
+        self.mapView.removeAnnotations(allAnnotations)
+        
+        var annotations = [MKPointAnnotation]() // set an empty array that belongs to MKPointAnnotation class
+        
+        // The MKPointAnnotation class defines a concrete annotation object located at a specified point
+        // i can set properties to the annotation by- var coordinate: CLLocationCoordinate2D { lat, long set }
+        
+        // Version 1 - HARDCODE locations data
+        // let locations = hardCodedLocationData()   // [[String : AnyObject]]
+        // print("locations from hardCodedLocationData() is \(locations)")
+        
+        // Version 2 - locations is sent from TabbedViewController to MapViewController
+        for dictionary in StudentModel.sharedInstance().listofStudents {
+            //            print("Now, looping through each StudentModel.sharedInstance().listofStudents")
+            // going through the dictionary "locations", assign properties of each location to properties of the annotation (=the pin on the map view) = create a MKPointAnnotation for each location
+            
+            // when v1 use hardcoded locations - let locations = hardCodedLocationData() -> [[String : AnyObject]], use below to call "key" "latitude"
+            // CCLocationCoordinate2D only takes long+lat in type "CCLocationDegress" - convert!
+            // let lat = CLLocationDegrees(dictionary["latitude"] as! Double) - call latitude with "dictionary["latitude"]"
+            
+            // Now, v2, we use locations returned from TabbedVC's getStudentLocations() - datastructure:
+            // ([onTheMap.StudentLocation(firstName: "Michael", lastName: "Stram", latitude: 41.883229, longitude: 0.0, mapString: "Chicago", ..), onTheMap.StudentLocation(firstName: "Ryan", lastName: "Phan", latitude: 37.338208199999997, longitude: -121.8863286, mapString: "San Jose, CA")
+            
+            //             testing only
+            //             print("lets check out location")
+            //            print(dictionary.latitude)
+            //            print(dictionary.longitude)
+            
+            
+            // CCLocationCoordinate2D only takes long+lat in type "CCLocationDegress" - convert!
+            let lat = CLLocationDegrees(dictionary.latitude)
+            let long = CLLocationDegrees(dictionary.longitude)
+            let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
+            
+            // properties here - then assign first to annotation (the pin on mapview)
+            let first = dictionary.firstName
+            let last = dictionary.lastName
+            let mediaURL = dictionary.mediaURL
+            //            print("mediaURL inside for dictionary in locations is.. \(mediaURL)") // NOTHING!
+            
+            // Assign above properties of EACH location to EACH annotation (the pin on mapview) - to DISPLAY on mapview -
+            // coordinate (extra), title, subtitle -> these 2 are similar to the "cell view" before.. the view always these as placeholder
+            let annotation = MKPointAnnotation()   // as array [annotations] only holds MKPointAnnotation OBJECTS -> so here, we create an object that is type MKPointAnnotation() -> that is annotation.
+            annotation.coordinate = coordinate
+            annotation.title = "\(first) \(last)"
+            annotation.subtitle = mediaURL
+            
+            // We place the annotation in an array of annotation first before commanding the view to display
+            
+            annotations.append(annotation)  // annotations = [annotation1, annotation2, annotation3, ...]
+        } // END of "for dictionary in locations"
+        //        print("annotations array inside buildAnnotationArray is ", annotations) // RETURNED - have stuff in it.
+        
+        self.mapView.addAnnotations(annotations) // exactly the SAME as line 47 - so no need to repeat that!
+        // return annotations // data type: [MKPointAnnotation] - don;t need this as we already have above command to put annotations on the map
+    } // END of func buildAnnotationsList()
+
+
+    
+    
+    
+} // End of private extension MapViewController
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

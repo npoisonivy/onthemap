@@ -12,7 +12,7 @@ class StudentsTableViewController: UITableViewController {
     
     // somehow, here needs to expect the [students] being passed by "getStudentsLocations's completion handler" -> return studentlocation in Struct & error, so we can use it to display below...
     
-    var locations: [StudentLocation] = [StudentLocation]() // prepare its type as struct -> prepares it to received the value from "getStudentLocations(C.H. returns: studentlocation, error) from tabbedVC.swift"
+    // var locations: [StudentLocation] = [StudentLocation]() // prepare its type as struct -> prepares it to received the value from "getStudentLocations(C.H. returns: studentlocation, error) from tabbedVC.swift"
     
     @IBOutlet weak var studentsLocationsTableView: UITableView!  // for calling reload data later
 
@@ -28,7 +28,7 @@ class StudentsTableViewController: UITableViewController {
         navigationItem.title = "On The Map"
 
         
-//        print("StudentTableView's (from viewwillappear) location.count is.. \(self.locations.count)") // #100 when refresh button is clicked...but 0 when i click back and forth the map, table icon....
+//        print("StudentTableView's (from viewwillappear) StudentModel.sharedInstance().listofStudents.count is.. \(self.locations.count)") // #100 when refresh button is clicked...but 0 when i click back and forth the map, table icon....
     } // end of viewDidLoad
     
     //  need to populate data here before this page is loaded
@@ -48,14 +48,13 @@ class StudentsTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
 //        print("@ tableVC, locations passed is \(self.locations)")
-        return self.locations.count
+        return StudentModel.sharedInstance().listofStudents.count
     }
 
     // to display data of each user - from self.locations on this page.
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        print("locations got passed \(locations)")
         let cell = tableView.dequeueReusableCell(withIdentifier: "LabelCell", for: indexPath)
-        let student = locations[(indexPath as NSIndexPath).row] // that serve "for loop" to loop thr 100 locations
+        let student = StudentModel.sharedInstance().listofStudents[(indexPath as NSIndexPath).row] // that serve "for loop" to loop thr 100 locations
         
         // cell.textLabel?.text = "Selection \(indexPath.section) Row\(indexPath.row)"
         cell.textLabel?.text = "\(student.firstName) \(student.lastName)" // individual students here
@@ -67,7 +66,7 @@ class StudentsTableViewController: UITableViewController {
     
     // use #didSelectRowAt to listen - if a student is clicked -> open "media url" from safari
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let student = locations[(indexPath as NSIndexPath).row]
+        let student = StudentModel.sharedInstance().listofStudents[(indexPath as NSIndexPath).row]
 
         let app = UIApplication.shared
         let url = URL(string: student.mediaURL)!

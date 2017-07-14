@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import Foundation
 
-class LoginViewController: UIViewController, UITextFieldDelegate {
+class LoginViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate {
        
     // MARK: Properties
 //    var appDelegate: AppDelegate! - We can either place info such as sessionID, userID @ appDelegate, but I choose to store it @ UdacityClient.swift where stores everything a client does = make GET/ POST request "taskforGETRequest", etc
@@ -20,7 +21,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var loginButton: BorderedButton!
-    @IBOutlet weak var signUpLink: UILabel! // sign up link
+    @IBOutlet weak var signUpLink: UITextView! // sign up link
     @IBOutlet weak var debugTextLabel: UILabel!
     // why does my favoritemovies app has this - @IBOutlet weak var movieImageView: UIImageView! ?? do i need one for Udacity image?
     
@@ -39,15 +40,37 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         self.passwordTextField.delegate = self.passwordDelegate
         
         // configureBackground() - do i need this ?? what is the code for "orange"? This is for blue
+        
+        // MARK: Label - partially clickable link
+        // signUpLink - @IBOutlet weak var signUpLink: UILabel! // sign up link
+        
+        // Attributed String for Label
+        let plainText = "Don't have an account? Sign Up" // - ok
+        let styledText = NSMutableAttributedString(string: plainText) // convert string to mutableattributestring -> so u can call class "NSMutableAttributedString" - OK
+        
+        
+        // Set Attribuets for Color, HyperLink and Font Size
+        // Option 1
+        // let attributes = [NSLinkAttributeName: NSURL(string: "https://www.udacity.com/account/auth#!/signup")!, NSForegroundColorAttributeName: UIColor.blue]
+        // styledText.setAttributes([String : Any]?, range: <#T##NSRange#>)
+        // styledText.setAttributes(attributes, range: NSMakeRange(23, 7))
+        
+        // Option 2
+        // below line of code replaces 2 lines of code above - set URL + NSRange!
+        styledText.addAttribute(NSLinkAttributeName, value: "https://www.udacity.com/account/auth#!/signup", range: NSRange(location: 23, length: 7))
+        
+        signUpLink.attributedText = styledText
+      
+        subscribeToKeyboardNotifications()
+
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        // do i even need this ?
         emailTextField.text = ""
         passwordTextField.text = ""
         setUIenabled(true)
-        
-        subscribeToKeyboardNotifications()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -57,12 +80,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        debugTextLabel.text = ""   // nothing to start with
+        // debugTextLabel.text = "hello"   // nothing to start with
     }
-    
-    // MARK: Label - partially clickable link
-//    signUpLink
-    
     
     // MARK: Actions
     @IBAction func loginPressed(_ sender: AnyObject) {  // i have to change from "Any" to "AnyObject"
@@ -70,7 +89,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         
         // did this go through ?
         if emailTextField.text!.isEmpty || passwordTextField.text!.isEmpty {
-            debugTextLabel.text = "Email or Password is Empty!"
+            displayError("Email or Password is Empty!")
+            // debugTextLabel.text = "Email or Password is Empty!"
             return
         } else { // if everything is filled...
             
@@ -91,6 +111,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                     } else {
                         self.displayError(errorString) // errorString from either getUserID or getPublicData
                         // alertVC, message: errorString
+                        self.setUIenabled(true)
                     }
                 } // end of performUIUpdatesOnMain
             } // end of authenticateWithViewController
@@ -161,7 +182,6 @@ private extension LoginViewController {
         } else {
             loginButton.alpha = 0.5
         }
-    
     }
     
     func displayError(_ errorString: String?) {
@@ -182,7 +202,7 @@ private extension LoginViewController {
     } // End of func displayError()
     
     func subscribeToKeyboardNotifications() {
-        // write func "keyboardWillShow"/ "keyboardWillHide"  -
+        // write func "keyboardWillShow"/ "keyboardWillHide"  - detect when UI triggers KB to show/ hide -> then contoller triggers our own func "keyboardWillShow"/ "keyboardWillHide"
         NotificationCenter.default.addObserver(self, selector: #selector(LoginViewController.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(LoginViewController.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
     }

@@ -50,13 +50,23 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
         mediaURLPostingStackView.isHidden = true
         
         // Declare textField's delegate
-        self.locationInput.delegate = locationDelegate
-        self.mediaURL.delegate = mediaURLDelegate
+        self.locationInput.delegate = self.locationDelegate
+        self.mediaURL.delegate = self.mediaURLDelegate
     
     } // end of viewDidLoad()
  
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        subscribeToKeyboardNotifications()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        unsubscribeToKeyboardNotifications()
     }
     
     @IBAction func submitMediaURL(_ sender: Any) {
@@ -116,6 +126,8 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
                     performUIUpdatesOnMain {
                         self.present(addStudentAlert, animated: true, completion: nil)
                     }
+                    // current view disappear, showing map/ tableVC again
+                    print("map/ table vc gonna show")
                     self.dismiss(animated: true, completion: nil) // go back to mapVC/ StudentsTVC
                 } // END of if success
                 
@@ -265,6 +277,41 @@ private extension InformationPostingViewController {
         // when true -> hide it -> stopanimating
         // when false -> show it -> startanimating
     }
+    
+    func subscribeToKeyboardNotifications() {
+        // write func "KeyboardWillShow"/ "keyboardWillHide"
+        NotificationCenter.default.addObserver(self, selector: #selector(InformationPostingViewController.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(InformationPostingViewController.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+    }
+    
+    @objc func keyboardWillShow(_ notification: NSNotification) { // why adding @objc ?
+        if locationInput.isFirstResponder || mediaURL.isFirstResponder {
+            view.frame.origin.y = getKeyboardHeight(notification) * (-1) // getKeyboardHeight(pass this notification) * -1 - so it view shifts up - avoid KB blocks it
+        } else {
+            // when user finger left textfield - reset view's y-axis
+            reset()
+        }
+    }
+    
+    @objc func keyboardWillHide(_ notification: NSNotification) {
+        reset()
+    }
+    
+    func getKeyboardHeight(_ notification: NSNotification) -> CGFloat {
+        let userInfo = notification.userInfo!
+        let keyboardSize = userInfo[UIKeyboardFrameEndUserInfoKey] as! NSValue // grabbing value of a dict  keyboard's size
+        return keyboardSize.cgRectValue.height
+    }
+    
+    func reset() {
+        self.view.frame.origin.y = 0
+    }
+    
+    func unsubscribeToKeyboardNotifications() { // no input - as the system will tell this func - when keyboard is hidden
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+    }
+    
 }
 
 

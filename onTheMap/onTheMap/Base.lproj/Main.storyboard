@@ -70,20 +70,25 @@
                                             <action selector="loginPressed:" destination="Zl2-hj-GF8" eventType="touchUpInside" id="HVf-Lt-MxN"/>
                                         </connections>
                                     </button>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Don't have an account? Sign Up" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="veg-7Q-lTD">
-                                        <rect key="frame" x="0.0" y="298" width="343" height="24"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="Don't have an account? Sign Up" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="HIz-2s-0yg">
+                                        <rect key="frame" x="0.0" y="298" width="343" height="50"/>
+                                        <color key="tintColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
+                                        <fontDescription key="fontDescription" name=".SFNSDisplay-Regular" family=".SF NS Display" pointSize="20"/>
+                                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                    </textView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Cqb-2z-5fZ">
-                                        <rect key="frame" x="0.0" y="332" width="343" height="208"/>
+                                        <rect key="frame" x="0.0" y="358" width="343" height="182"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="25"/>
-                                        <color key="textColor" red="0.94433032898856906" green="1" blue="0.94889016094788525" alpha="1" colorSpace="calibratedRGB"/>
+                                        <color key="textColor" red="1" green="0.91258484604477619" blue="0.9446737065371873" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="249" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="snv-QM-78Y" customClass="BorderedButton" customModule="onTheMap" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="550" width="343" height="44"/>
+                                        <accessibility key="accessibilityConfiguration">
+                                            <accessibilityTraits key="traits" none="YES"/>
+                                            <bool key="isElement" value="YES"/>
+                                        </accessibility>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="44" id="nZ6-2h-MPm"/>
                                         </constraints>
@@ -93,11 +98,11 @@
                                     </button>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstItem="veg-7Q-lTD" firstAttribute="leading" secondItem="GTx-32-VNT" secondAttribute="leading" id="306-fw-9h3"/>
                                     <constraint firstItem="buD-xv-EQ9" firstAttribute="height" secondItem="enZ-la-8qY" secondAttribute="height" id="DEH-Cf-a4g"/>
-                                    <constraint firstItem="Cqb-2z-5fZ" firstAttribute="top" secondItem="veg-7Q-lTD" secondAttribute="bottom" constant="10" id="LgA-G7-WIq"/>
-                                    <constraint firstAttribute="trailing" secondItem="veg-7Q-lTD" secondAttribute="trailing" id="NTg-Ci-hSq"/>
-                                    <constraint firstItem="veg-7Q-lTD" firstAttribute="top" secondItem="COa-R8-NZX" secondAttribute="bottom" constant="10" id="cR5-D0-v6R"/>
+                                    <constraint firstAttribute="trailing" secondItem="HIz-2s-0yg" secondAttribute="trailing" id="LMq-rg-JOS"/>
+                                    <constraint firstItem="HIz-2s-0yg" firstAttribute="top" secondItem="COa-R8-NZX" secondAttribute="bottom" constant="10" id="UnH-uy-6Fs"/>
+                                    <constraint firstItem="Cqb-2z-5fZ" firstAttribute="top" secondItem="HIz-2s-0yg" secondAttribute="bottom" constant="10" id="rTz-Gj-bPt"/>
+                                    <constraint firstAttribute="leadingMargin" secondItem="HIz-2s-0yg" secondAttribute="leading" id="tOv-oA-TV9"/>
                                 </constraints>
                             </stackView>
                         </subviews>
@@ -118,13 +123,13 @@
                         <outlet property="emailTextField" destination="enZ-la-8qY" id="i7l-Of-udk"/>
                         <outlet property="loginButton" destination="COa-R8-NZX" id="ZqU-Gw-9xH"/>
                         <outlet property="passwordTextField" destination="buD-xv-EQ9" id="rYR-rf-D2I"/>
-                        <outlet property="signUpLink" destination="veg-7Q-lTD" id="tRy-Kz-rgM"/>
+                        <outlet property="signUpLink" destination="HIz-2s-0yg" id="2lR-Ug-ucR"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jCx-5b-oxH" sceneMemberID="firstResponder"/>
                 <tapGestureRecognizer id="mJ2-HE-8Kz"/>
             </objects>
-            <point key="canvasLocation" x="-174" y="-219"/>
+            <point key="canvasLocation" x="-175.19999999999999" y="-219.04047976011995"/>
         </scene>
         <!--TabbedViewController-->
         <scene sceneID="EZT-bA-tj2">
@@ -193,7 +198,7 @@
                                 <rect key="frame" x="0.0" y="28" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="U6L-L1-Mzq" id="WGQ-fx-4rl">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
