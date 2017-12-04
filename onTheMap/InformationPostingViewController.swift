@@ -190,7 +190,7 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
                 print("UdacityClient.sharedInstance().forwardGeocoding(location) runs")
                 
                 // stop activity indicator here 
-                
+                // nikki
                 if error != nil { // error is an NSerror, displayError expects String....
                     print(error)
 //                    self.debugArea.text = error

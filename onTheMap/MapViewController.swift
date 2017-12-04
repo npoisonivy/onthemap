@@ -89,14 +89,14 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: reuserId) as? MKPinAnnotationView
         // pinView is now one of the "MKPinAnnotationView" -> means it can call its properties as below:
         
-        if pinView == nil {   // not sure what does this do - ask Mentor
+        if pinView == nil {   // if there is no pin ever assigned on the map YET, set its design
             pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuserId)
-            pinView!.canShowCallout = true
+            pinView!.canShowCallout = true   // Callout = a callout bubble will be shown when pin is selected
             pinView!.pinTintColor = .red
             pinView!.rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
             
         } else {    // dequeueReusable "Cell" = place pin of student on the map
-            pinView!.annotation = annotation   // -> this is from dictionary part
+            pinView!.annotation = annotation   // -> this is from dictionary part --> is that right?? ask mentor!
         }
         
         return pinView

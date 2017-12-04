@@ -78,7 +78,11 @@ class UdacityClient: NSObject { // save loginUser properties here!!
             
             /* GUARD: Was there an error? - error from datatask call*/
             guard (error == nil) else {
-                sendError("There was an error with your request: \(error)")
+                if let error = error {
+                    print(error)
+                    sendError("\(error.localizedDescription)")
+                    // sendError("There was an error with your request: \(error)")
+                }
                 return
             }
             
@@ -94,7 +98,7 @@ class UdacityClient: NSObject { // save loginUser properties here!!
             guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
                 
                 sendError( (NSString(data: data, encoding: String.Encoding.utf8.rawValue)!) as String)
-                // sendError("Your request returned a status code other than 2xx!")
+                // sendError("Your reqest returned a stauts code other than 2xx!" + ((NSString(data: data, encoding: String.Encoding.utf8.rawValue)!) as String))
                 return
             }
             
@@ -151,7 +155,7 @@ class UdacityClient: NSObject { // save loginUser properties here!!
             /* GUARD: Was there an error? */
             guard (error == nil) else {
                 print(error)
-                // screen off "optional"
+                // unwrap "optional" error (since Guard ... already save value to error.
                 if let error = error {
                     sendError("\(error.localizedDescription)")
                 }
