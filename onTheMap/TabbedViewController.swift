@@ -12,8 +12,6 @@ import MapKit
 class TabbedViewController: UITabBarController {
     @IBOutlet weak var logOutBtn: UIBarButtonItem!
     
-    var locations: [StudentLocation] = [StudentLocation]() // prepare its type as struct -> prepares it to received the value from "getStudentLocations(C.H. returns: studentlocation, error)"
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         print("****TabbedVC's viewWillAppear is called ")
@@ -97,22 +95,28 @@ private extension TabbedViewController {
             
             print("studentsLocations (inside displayLocation() - coming back from getStudentsLocations is...", studentsLocations)
             
-            //StudentModel.sharedInstance().listofStudents = studentsLocations! // assign to listofStudents
-            // locations and StudentModel.sharedInstance() shares same value "studentsLocations" returned from getStudentsLocations
+            // call straight "StudentModel.sharedInstance().listofStudents" to get the current version of all students!
             
+    //        var locations: [StudentLocation] = [StudentLocation]() // prepare its type as struct -> prepares it to received the value from "getStudentLocations(C.H. returns: studentlocation, error)"
+            
+            // does not assign studentsLocations to locations unless locations != nil
             if let locations = studentsLocations {
-                StudentModel.sharedInstance().listofStudents = studentsLocations!
+                
                 print("Got the locations from getStudentsLocation call")
+                
                 DispatchQueue.main.async {
-                    // does not assign studentsLocations to locations unless locations != nil
-                    // instead of doing this - save locations to singleton.sharedinstance.listofstudents
-                    self.locations = locations // many struct of [StudentLocation]
                     
-                    // now we have locations to pass to next controller....
+                    // updating the central listofStudents with call's returned value "studentsLocations"
+                    StudentModel.sharedInstance().listofStudents = locations
+                    
+                    // StudentModel.sharedInstance().listofStudents = many struct of [StudentLocation]
+
+                    // now we have most UPDATED locations (i.e. StudentModel.sharedInstance().listofStudents)to pass to access by next controllers....
                     
                     // supposed to call below - but we should call it from mapVC...
                     // self.mapView.addAnnotations(buildAnnotationsList())// returned datatype: [MKPointAnnotation] -
-                    print("self.location count viewWillAppear is... \(self.locations.count)") // #100 right?? - self.location count viewWillAppear is... 50
+                    print("StudentModel's location count viewWillAppear is... \(StudentModel.sharedInstance().listofStudents.count)") // #100
+                    
                     performUIUpdatesOnMain {
                         
                         // reloaddata @ tableviewcontroller

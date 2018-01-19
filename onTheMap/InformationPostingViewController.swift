@@ -61,12 +61,12 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        subscribeToKeyboardNotifications()
+        // subscribeToKeyboardNotifications()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        unsubscribeToKeyboardNotifications()
+        // unsubscribeToKeyboardNotifications()
     }
     
     @IBAction func submitMediaURL(_ sender: Any) {
@@ -93,8 +93,9 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate, UIT
                 
                 /* inside func submitStudentLoc - has listener for when "state" == "put", pop alertVC for overwrite
                  overwrite - 2 actions - 1. yes -> then call UdacityClient.shareInstance().putastudentlocation , 2. */
+                print("error is \(error) INSIDE UdacityClient.sharedInstance().submitStudentLoc() ")
                 
-                print("error and success is \(error) \(success) INSIDE UdacityClient.sharedInstance().submitStudentLoc() ")
+                print("success is \(success) INSIDE UdacityClient.sharedInstance().submitStudentLoc() ")
                 
                 guard (error == nil) else {  // have error
                     print("getAstudent failed, should show Alert box")

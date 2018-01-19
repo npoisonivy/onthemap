@@ -26,8 +26,6 @@ class MapViewController: UIViewController, MKMapViewDelegate {
 
     @IBOutlet weak var mapView: MKMapView! // it does not have MKMapViewDelegate till adding "self.mapView.delegate = self  // self = MapVC.swift"
     
-    // var locations: [StudentLocation] = [StudentLocation]() // prepare its type as struct -> prepares it to received the value from "getStudentLocations(C.H. returns: studentlocation, error) from tabbedVC.swift"
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         print("MapVC's viewWillAppear is called")

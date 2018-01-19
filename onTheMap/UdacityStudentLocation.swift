@@ -28,7 +28,18 @@ struct StudentLocation {
         mapString = dictionary["mapString"] != nil ? dictionary["mapString"] as! String: ""
         mediaURL = dictionary["mediaURL"] != nil ? dictionary["mediaURL"] as! String: ""
         objectId = dictionary["objectId"] != nil ? dictionary["objectId"] as! String: ""
-        userID = dictionary["uniqueKey"] != nil ? dictionary["uniqueKey"] as! String: ""
+        // userID = dictionary["uniqueKey"] if not nil, if it's nil, then do ...
+        // if dictionary["uniqueKey"] is NSNull -> then set it as String: ""
+        if dictionary["uniqueKey"] is NSNull {
+            userID = ""
+        } else { // if not Null, either have value or not.
+            userID = dictionary["uniqueKey"] != nil ? dictionary["uniqueKey"] as! String: ""
+        }
+        
+        // original code: 
+        // userID = dictionary["uniqueKey"] != nil ? dictionary["uniqueKey"] as! String: ""
+        // error raised as - Could not cast value of type 'NSNull' (0x110f278c8) to 'NSString' (0x10d262c40).
+        // Investigation: error raised when one user from response has NULL uniqueKey - result is , ["latitude": 51.5001524, "createdAt": 2018-01-15T10:13:37.687Z, "uniqueKey": <null>, "objectId": HCS88FEI6s, "updatedAt": 2018-01-15T10:13:37.687Z, "firstName": Joshua, "longitude": -0.1262362, "mediaURL": , "lastName": Ajakaiye] -
     }
     
     static func StudentsLocationsFromResults(_ results: [[String: AnyObject]]) -> [StudentLocation] {
@@ -38,6 +49,7 @@ struct StudentLocation {
         
         for result in results {
             
+            print("result is , \(result)")
             studentsLocations.append(StudentLocation(dictionary: result)) // when appending 1. a STRUCT StudentLocation -> append(StudentLocation(....)), it starts 2.to all initialize - means creating a dictionary which is "result" and put matching value to it - i.e. "dictionary: result"
         }
 //        print("studentsLocations from StudentsLocationsFromResults is... \(studentsLocations)")

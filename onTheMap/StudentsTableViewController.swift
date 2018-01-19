@@ -10,9 +10,7 @@ import UIKit
 
 class StudentsTableViewController: UITableViewController {
     
-    // somehow, here needs to expect the [students] being passed by "getStudentsLocations's completion handler" -> return studentlocation in Struct & error, so we can use it to display below...
-    
-    // var locations: [StudentLocation] = [StudentLocation]() // prepare its type as struct -> prepares it to received the value from "getStudentLocations(C.H. returns: studentlocation, error) from tabbedVC.swift"
+    // somehow, here needs to expect the [students] being passed by "getStudentsLocations's completion handler" -> return studentlocation in Struct & error, so we can use it to display below... "return StudentModel.sharedInstance().listofStudents.count"
     
     @IBOutlet weak var studentsLocationsTableView: UITableView!  // for calling reload data later
 
@@ -67,10 +65,33 @@ class StudentsTableViewController: UITableViewController {
     // use #didSelectRowAt to listen - if a student is clicked -> open "media url" from safari
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let student = StudentModel.sharedInstance().listofStudents[(indexPath as NSIndexPath).row]
+        
+        // change state of element from didSelect to deselect (= reset state)
+        tableView.deselectRow(at: indexPath, animated: true)
 
         let app = UIApplication.shared
         let url = URL(string: student.mediaURL)!
-        app.open(url)
+        
+        // check if url has good format before opening
+        if app.canOpenURL(url) {
+            app.open(url)
+        } else {
+            print("mediaURL can be opened", app.canOpenURL(url))
+            
+            // show alert
+            let failedURLAlert = UIAlertController(title: "Failure", message: "URL cannot be opened", preferredStyle: UIAlertControllerStyle.alert)
+            
+            failedURLAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action: UIAlertAction) in
+                failedURLAlert.dismiss(animated: true, completion: nil)
+                
+                self.dismiss(animated: true, completion: nil) // go back to the StudentsTableViewController
+            }))
+            
+            performUIUpdatesOnMain {
+                self.present(failedURLAlert, animated: true, completion: nil)
+            }
+            
+        } // END of if/ else
         
     } // end of tableview "didSelectRowAt"
     

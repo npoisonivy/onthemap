@@ -23,7 +23,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate, UITextViewDele
     @IBOutlet weak var loginButton: BorderedButton!
     @IBOutlet weak var signUpLink: UITextView! // sign up link
     @IBOutlet weak var debugTextLabel: UILabel!
-    // why does my favoritemovies app has this - @IBOutlet weak var movieImageView: UIImageView! ?? do i need one for Udacity image?
+    
+    
     
     // name the delegates
 //     let emailTextDelegate = Text

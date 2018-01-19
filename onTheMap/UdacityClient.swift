@@ -290,6 +290,8 @@ class UdacityClient: NSObject { // save loginUser properties here!!
 
         do {
             print("@ do statement... ")
+            
+            print("userID is , \(userID)")
 //            print(NSString(data: newData, encoding: String.Encoding.utf8.rawValue)!)  // if self.baseURL == "udacity - should not have ")]}'" anymore!
             
             parsedResult = try JSONSerialization.jsonObject(with: newData, options: .allowFragments) as AnyObject
